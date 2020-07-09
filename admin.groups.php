@@ -901,6 +901,7 @@ class BU_Groups_Admin {
 		foreach ( $content_types as $pt ) {
 
 			$count = 0;
+			$global_edit = false;
 
 			if ( $group->id > 0 ) {
 				$global_edit = $groups->post_is_globally_editable_by_group( $pt->name, $group->id ) ? 'global-edit' : '';
