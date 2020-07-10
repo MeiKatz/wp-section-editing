@@ -77,7 +77,7 @@ class Groups_Admin {
 
 			if ( empty( $groups ) ) {
 
-				$content = __( 'None', SECDOR_TEXTDOMAIN );
+				$content = "—";
 
 			} else {
 
