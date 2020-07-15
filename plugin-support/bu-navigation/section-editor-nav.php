@@ -47,7 +47,9 @@ function buse_bu_navigation_filter_posts( $posts ) {
 
 	$current_user = get_current_user_id();
 	$groups = Secdor\Edit_Groups::get_instance();
-	$section_groups = $groups->find_groups_for_user( $current_user, 'ids' );
+	$section_groups = array_keys(
+		$groups->find_groups_for_user( $current_user )
+	);
 
 	if ( ( is_array( $posts ) ) && ( count( $posts ) > 0 ) ) {
 

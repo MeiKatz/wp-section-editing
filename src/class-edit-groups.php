@@ -253,18 +253,12 @@ class Edit_Groups {
 	 * @param int $user_id WordPress user id
 	 * @return array array of group ids for which the specified user belongs
 	 */
-	public function find_groups_for_user( $user_id, $output = 'objects' ) {
-
+	public function find_groups_for_user( $user_id ) {
 		$groups = array();
 
 		foreach ( $this->groups as $group ) {
 			if ( $group->has_user( $user_id ) ) {
-
-				if ( $output === 'objects' ) {
-					$groups[ $group->id ] = $group;
-				} else if ( $output === 'ids' ) {
-					array_push( $groups, $group->id );
-				}
+				$groups[ $group->id ] = $group;
 			}
 		}
 
@@ -331,7 +325,9 @@ class Edit_Groups {
 			}
 
 			// Get groups for users
-			$group_ids = $this->find_groups_for_user( $user_id, 'ids' );
+			$group_ids = array_keys(
+				$this->find_groups_for_user( $user_id )
+			);
 
 		}
 
