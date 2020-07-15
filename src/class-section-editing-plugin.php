@@ -54,9 +54,6 @@ class BU_Section_Editing_Plugin {
         )
       );
 
-      require_once( $dirname . '/class-groups-admin.php' );
-      require_once( $dirname . '/class-groups-admin-ajax.php' );
-
       BU_Groups_Admin::register_hooks();
       BU_Groups_Admin_Ajax::register_hooks();
 
@@ -159,15 +156,6 @@ class BU_Section_Editing_Plugin {
 
     // Check if plugin has been updated (or just installed) and store current version
     if ( version_compare( $version, self::BUSE_VERSION, '<' ) ) {
-      $dirname = realpath(
-        sprintf(
-          "%s/src",
-          BUSE_PLUGIN_BASE
-        )
-      );
-
-      require_once( $dirname . "/class-section-editing-upgrader.php" );
-
       self::$upgrader = new BU_Section_Editing_Upgrader();
       self::$upgrader->upgrade( $version );
 
@@ -188,15 +176,6 @@ class BU_Section_Editing_Plugin {
 
     // Look for any query params that signify updates
     if ( array_key_exists( 'activated', $_GET ) || array_key_exists( 'activate', $_GET ) || array_key_exists( 'activate-multi', $_GET ) ) {
-      $dirname = realpath(
-        sprintf(
-          "%s/src",
-          BUSE_PLUGIN_BASE
-        )
-      );
-
-      require_once( $dirname . "/class-section-editing-upgrader.php" );
-
       self::$upgrader = new BU_Section_Editing_Upgrader();
       self::$upgrader->populate_roles();
 

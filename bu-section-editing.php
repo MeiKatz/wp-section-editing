@@ -34,16 +34,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 @author Andrew Bauer <awbauer@bu.edu>
 */
 
-require_once( dirname( __FILE__ ) . "/src/class-section-capabilities.php" );
-require_once( dirname( __FILE__ ) . "/src/class-edit-groups.php" );
-require_once( dirname( __FILE__ ) . "/src/class-groups-list.php" );
-require_once( dirname( __FILE__ ) . "/src/class-group-permissions.php" );
-require_once( dirname( __FILE__ ) . "/src/class-edit-group.php" );
-require_once( dirname( __FILE__ ) . "/src/class-groups-admin.php" );
-require_once( dirname( __FILE__ ) . "/src/class-groups-admin-ajax.php" );
-require_once( dirname( __FILE__ ) . "/src/class-permissions-editor.php" );
-require_once( dirname( __FILE__ ) . "/src/class-flat-permissions-editor.php" );
-require_once( dirname( __FILE__ ) . "/src/class-hierarchical-permissions-editor.php" );
+spl_autoload_register(function ($class_name) {
+  if ( substr( $class_name, 0, 3 ) !== "BU_" ) {
+    return;
+  }
+
+  $class_name = str_replace(
+    "_",
+    "-",
+    substr( $class_name, 3 )
+  );
+
+  $class_name = strtolower( $class_name );
+
+  $file_name = sprintf(
+    "%s/src/class-%s.php",
+    dirname( __FILE__ ),
+    $class_name
+  );
+
+  if ( file_exists( $file_name ) ) {
+    require_once $file_name;
+  }
+});
+
+if ( function_exists( "__autoload" ) ) {
+  $autoload_functions = spl_autoload_functions();
+
+  # re-add __autoload() function if it was dropped
+  # by spl_autoload_register()
+  if ( !in_array( "__autoload", $autoload_functions ) ) {
+    spl_autoload_register( "__autoload", true, true );
+  }
+}
 
 define( "BUSE_PLUGIN_BASE", realpath( __DIR__ ) );
 define( "BUSE_PLUGIN_ENTRYPOINT", realpath( __FILE__ ) );
@@ -53,7 +76,5 @@ define( 'BUSE_TEXTDOMAIN', 'bu-section-editing' );
 
 define( 'BUSE_NAV_INSTALL_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );
 define( 'BUSE_NAV_UPGRADE_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );
-
-require_once( dirname( __FILE__ ) . "/src/class-section-editing-plugin.php" );
 
 BU_Section_Editing_Plugin::register_hooks();
