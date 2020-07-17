@@ -390,6 +390,8 @@ class Groups_Admin {
 		}
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		$suffix = "";
 		$version = Section_Editing_Plugin::VERSION;
 
 		if ( in_array( $hook, self::$manage_groups_hooks ) ) {
@@ -407,7 +409,43 @@ class Groups_Admin {
 			wp_enqueue_script( 'buse-site-users', admin_url( 'admin-ajax.php?action=secdor_site_users_script' ), array(), null );
 
 			// Group editor
-			wp_enqueue_script( 'group-editor', plugins_url( '/js/group-editor' . $suffix . '.js', SECDOR_PLUGIN_ENTRYPOINT ), array( 'jquery', 'jquery-ui-autocomplete' ), $version, true );
+			wp_enqueue_script(
+				"group-editor",
+				plugins_url(
+					"/js/group-editor" . $suffix . ".js",
+					SECDOR_PLUGIN_ENTRYPOINT
+				),
+				array(
+					"jquery",
+					"jquery-ui-autocomplete",
+					"postbox"
+				),
+				$version,
+				true
+			);
+
+			wp_enqueue_script(
+				"secdor-tabs",
+				plugins_url(
+					"/js/secdor-tabs" . $suffix . ".js",
+					SECDOR_PLUGIN_ENTRYPOINT
+				),
+				array( "jquery" ),
+				$version,
+				true
+			);
+
+			wp_enqueue_script(
+				"secdor-tree",
+				plugins_url(
+					"/js/secdor-tree" . $suffix . ".js",
+					SECDOR_PLUGIN_ENTRYPOINT
+				),
+				array( "jquery" ),
+				$version,
+				true
+			);
+
 			wp_localize_script( 'group-editor', 'secdor_group_editor_settings', array_merge( array( 'pluginUrl' => plugins_url( "", SECDOR_PLUGIN_ENTRYPOINT ) ), self::group_editor_i10n() ) );
 
 			// Hierarchical permissions editor script
@@ -660,7 +698,7 @@ class Groups_Admin {
 		}
 
 		// Handle all possible $_POST actions
-		if ( isset( $_POST['action'] ) && in_array( $_POST['action'], array( 'add', 'update' ) ) ) {
+		if ( isset( $_POST['publish'] ) && in_array( $_POST['publish'], array( 'create', 'update' ) ) ) {
 
 			if ( ! check_admin_referer( 'save_section_editing_group' ) ) {
 				wp_die( 'Cheatin, uh?' );
@@ -680,9 +718,9 @@ class Groups_Admin {
 
 				$clean_data = $results['data'];
 
-				switch ( $_POST['action'] ) {
+				switch ( $_POST['publish'] ) {
 
-					case 'add':
+					case 'create':
 						$group = $groups->add_group( $clean_data );
 						$group_id = $group->id;
 						$status = 2;
@@ -805,12 +843,30 @@ class Groups_Admin {
 		$perm_panel = isset( $_GET['perm_panel'] ) ? $_GET['perm_panel'] : 'page';
 
 		switch ( $page ) {
-
 			// Manage groups and edit group page, depending on action
 			case self::MANAGE_GROUPS_SLUG:
-
 				if ( $group_id > 0 ) {
+					Meta_Box_Details::get_instance();
+					Meta_Box_Members::get_instance();
+					Meta_Box_Description::get_instance();
+
+					do_action(
+						"secdor_load_group_edit"
+					);
+
 					$group = $groups->get( $group_id );
+
+					do_action(
+						"add_meta_boxes_" . get_current_screen()->id,
+						$group
+					);
+
+					do_action(
+						"add_meta_boxes",
+						get_current_screen()->id,
+						$group
+					);
+
 					$page_title = sprintf( esc_html__( 'Edit Section Group %s', SECDOR_TEXTDOMAIN ), $group->name() );
 					$template_path = sprintf(
 						"%s/%s",
@@ -831,7 +887,27 @@ class Groups_Admin {
 
 			// New group page
 			case self::NEW_GROUP_SLUG:
+				Meta_Box_Details::get_instance();
+				Meta_Box_Members::get_instance();
+				Meta_Box_Description::get_instance();
+
+				do_action(
+					"secdor_load_group_new"
+				);
+
 				$group = new Edit_Group();
+
+				do_action(
+					"add_meta_boxes_" . get_current_screen()->id,
+					$group
+				);
+
+				do_action(
+					"add_meta_boxes",
+					get_current_screen()->id,
+					$group
+				);
+
 				$page_title = __( 'Add Section Group', SECDOR_TEXTDOMAIN );
 
 				$template_path = sprintf(
@@ -851,7 +927,7 @@ class Groups_Admin {
 	/**
 	 * Store custom "Posts per page" screen option for manage groups page in user meta
 	 */
-	public function manage_groups_set_screen_option( $status, $option, $value ) {
+public function manage_groups_set_screen_option( $status, $option, $value ) {
 
 		if ( self::POSTS_PER_PAGE_OPTION == $option ) {
 			return $value;
@@ -938,6 +1014,11 @@ class Groups_Admin {
 
 		foreach ( $content_types as $pt ) {
 			$count = $pt[ "count" ];
+
+			if ($count < 1) {
+				continue;
+			}
+
 			$global_edit = (
 				$pt[ "global_edit" ]
 					? "global-edit"

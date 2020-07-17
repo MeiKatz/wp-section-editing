@@ -101,7 +101,7 @@ class Edit_Group {
       return null;
     }
 
-    return $this->id;
+    return intval( $this->id );
   }
 
   public function name() {
@@ -354,13 +354,95 @@ class Edit_Group {
     return $this->permissions;
   }
 
+  private function get_post_id( $post ) {
+    if ( $post instanceof WP_Post ) {
+      return $post->ID;
+    }
+
+    if ( is_numeric( $post ) ) {
+      return intval( $post );
+    }
+
+    return null;
+  }
+
+  private function get_array_of_post_ids( $posts ) {
+    if (
+      $posts instanceof WP_Post
+        || is_numeric( $posts )
+    ) {
+      return $this->get_array_of_post_ids(array(
+        $posts
+      ));
+    }
+
+    $posts = array_map(function ( $post ) {
+      return $this->to_post_id( $post );
+    }, $posts);
+
+    return array_unique(
+      array_filter( $posts )
+    );
+  }
+
+  public function grant( $posts ) {
+    if ( $this->can_edit( $post ) ) {
+      return;
+    }
+
+    $post_id = $this->get_post_id( $post );
+    $allowed_groups = get_post_meta(
+      $post_id,
+      self::META_KEY
+    );
+
+    array_push(
+      $allowed_groups,
+      $this->id()
+    );
+
+    update_post_meta(
+      $post_id,
+      self::META_KEY,
+      $allowed_groups
+    );
+  }
+
+  public function deny( $posts ) {
+    if ( !$this->can_edit( $post ) ) {
+      return;
+    }
+
+    $post_id = $this->get_post_id( $post );
+    $allowed_groups = get_post_meta(
+      $post_id,
+      self::META_KEY
+    );
+    $self_id = $this->id();
+
+    $allowed_groups = array_filter(
+      $allowed_groups,
+      function ( $group_id ) use ( $self_id ) {
+        return ( (int) $group_id !== $self_id );
+      },
+    );
+
+    update_post_meta(
+      $post_id,
+      self::META_KEY,
+      $allowed_groups
+    );
+  }
+
   /**
    * Can this group edit a particular post
    */
   public function can_edit(
-    $post_id,
+    $post,
     $ignore_global = false
   ) {
+    $post_id = $this->get_post_id( $post );
+
     if ( $ignore_global ) {
       $groups = Edit_Groups::get_instance();
 

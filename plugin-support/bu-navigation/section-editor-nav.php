@@ -21,6 +21,8 @@ function buse_bu_navigation_scripts() {
 	$screen = get_current_screen();
 	$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
+	$suffix = "";
+
 	wp_enqueue_script( 'section-editor-nav', plugins_url( 'js/section-editor-nav' . $suffix . '.js', SECDOR_PLUGIN_ENTRYPOINT ), array( 'bu-navigation' ), Secdor\Section_Editing_Plugin::VERSION, true );
 
 	if ( function_exists( 'bu_navigation_supported_post_types' ) ) {

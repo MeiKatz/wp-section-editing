@@ -13,6 +13,16 @@ class Edit_User {
     $this->wp_user = $wp_user;
   }
 
+  public static function find( $id ) {
+    $wp_user = get_user_by( "ID", $id );
+
+    if ( $wp_user === false ) {
+      return null;
+    }
+
+    return new self( $wp_user );
+  }
+
   public static function get_current() {
     $wp_user = wp_get_current_user();
     return new self( $wp_user );
@@ -43,7 +53,7 @@ class Edit_User {
       $edit_user = new Edit_User( $wp_user );
 
       if ( $edit_user->is_allowed() ) {
-        $allowed_users[] = $wp_user;
+        $allowed_users[] = new self( $wp_user );
       }
     }
 
