@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: Secdor Section Editing 0.9.8\n"
 "Report-Msgid-Bugs-To: https://github.com/MeiKatz/secdor-section-"
 "editing/issues\n"
-"POT-Creation-Date: 2020-08-25 11:05+0200\n"
-"PO-Revision-Date: 2020-08-25 11:05+0200\n"
+"POT-Creation-Date: 2020-08-25 11:12+0200\n"
+"PO-Revision-Date: 2020-08-25 11:12+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Eazy Po 0.9.5.3\n"
 
 #: interface/edit-group.php:7 interface/groups.php:6
-#: src/class-groups-admin.php:516
+#: src/class-groups-admin.php:532
 msgid "Add New"
 msgstr ""
 
@@ -56,7 +56,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: interface/group-members.php:19 src/class-groups-admin.php:457
+#: interface/group-members.php:19 src/class-groups-admin.php:473
 msgid "member"
 msgid_plural "members"
 msgstr[0] ""
@@ -87,11 +87,11 @@ msgstr ""
 msgid "Search %s"
 msgstr ""
 
-#: interface/group-permissions.php:42 src/class-groups-admin.php:451
+#: interface/group-permissions.php:42 src/class-groups-admin.php:467
 msgid "Enable bulk edit mode"
 msgstr ""
 
-#: interface/group-permissions.php:42 src/class-groups-admin.php:449
+#: interface/group-permissions.php:42 src/class-groups-admin.php:465
 msgid "Bulk Edit"
 msgstr ""
 
@@ -147,9 +147,9 @@ msgstr ""
 msgid "Editable entries"
 msgstr ""
 
-#: interface/groups.php:3 src/class-groups-admin.php:62
-#: src/class-groups-admin.php:495 src/class-groups-admin.php:496
-#: src/class-groups-admin.php:506
+#: interface/groups.php:3 src/class-groups-admin.php:78
+#: src/class-groups-admin.php:511 src/class-groups-admin.php:512
+#: src/class-groups-admin.php:522
 msgid "Section Groups"
 msgstr ""
 
@@ -171,13 +171,13 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:412
-#: src/class-groups-admin.php:466
+#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:428
+#: src/class-groups-admin.php:482
 msgid "Allow"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:413
-#: src/class-groups-admin.php:467
+#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:429
+#: src/class-groups-admin.php:483
 msgid "Deny"
 msgstr ""
 
@@ -197,89 +197,93 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/class-groups-admin.php:109
+#: src/class-groups-admin.php:67
+msgid "Section Group"
+msgstr ""
+
+#: src/class-groups-admin.php:125
 msgid "and"
 msgstr ""
 
-#: src/class-groups-admin.php:112
+#: src/class-groups-admin.php:128
 msgid "other"
 msgid_plural "others"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/class-groups-admin.php:230 src/class-groups-admin.php:291
+#: src/class-groups-admin.php:246 src/class-groups-admin.php:307
 msgid "Editable"
 msgstr ""
 
-#: src/class-groups-admin.php:231
+#: src/class-groups-admin.php:247
 #, php-format
 msgid "Editable <span class=\"count\">(%s)</span>"
 msgid_plural "Editable <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/class-groups-admin.php:429
+#: src/class-groups-admin.php:445
 msgid "You are not able to edit the parent."
 msgstr ""
 
-#: src/class-groups-admin.php:430
+#: src/class-groups-admin.php:446
 msgid ""
 "You are not able to edit the parent, so you cannot place this page under the "
 "parent."
 msgstr ""
 
-#: src/class-groups-admin.php:431
+#: src/class-groups-admin.php:447
 msgid "Published"
 msgstr ""
 
-#: src/class-groups-admin.php:444 src/class-groups-admin.php:604
+#: src/class-groups-admin.php:460 src/class-groups-admin.php:620
 msgid "users page"
 msgstr ""
 
-#: src/class-groups-admin.php:445
+#: src/class-groups-admin.php:461
 msgid "add them to your site"
 msgstr ""
 
-#: src/class-groups-admin.php:446 src/class-section-editing-plugin.php:85
+#: src/class-groups-admin.php:462 src/class-section-editing-plugin.php:85
 msgid "BU Navigation plugin"
 msgstr ""
 
-#: src/class-groups-admin.php:450
+#: src/class-groups-admin.php:466
 msgid "Close Bulk Edit"
 msgstr ""
 
-#: src/class-groups-admin.php:452
+#: src/class-groups-admin.php:468
 msgid "Disable bulk edit mode"
 msgstr ""
 
-#: src/class-groups-admin.php:453
+#: src/class-groups-admin.php:469
 msgid "Are you sure you want to do this?"
 msgstr ""
 
-#: src/class-groups-admin.php:454
+#: src/class-groups-admin.php:470
 msgid ""
 "You are about to permanently delete this section editing group.  This action "
 "is irreversible."
 msgstr ""
 
-#: src/class-groups-admin.php:455
+#: src/class-groups-admin.php:471
 msgid ""
 "Your group has pending edits.  If you leave now, your changes will be lost."
 msgstr ""
 
-#: src/class-groups-admin.php:456
+#: src/class-groups-admin.php:472
 msgid "Loading..."
 msgstr ""
 
-#: src/class-groups-admin.php:458
+#: src/class-groups-admin.php:474
 msgid "members"
 msgstr ""
 
-#: src/class-groups-admin.php:459
+#: src/class-groups-admin.php:475
 msgid "Section editing groups require a name."
 msgstr ""
 
-#: src/class-groups-admin.php:461
+#: src/class-groups-admin.php:477
 #, php-format
 msgid ""
 "In order to set permissions for hierarchical post types, the BU Navigation "
@@ -289,91 +293,91 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/class-groups-admin.php:464
+#: src/class-groups-admin.php:480
 #, php-format
 msgid "Please install the %s in order to set permissions for this post type."
 msgstr ""
 
-#: src/class-groups-admin.php:468
+#: src/class-groups-admin.php:484
 msgid "editable"
 msgstr ""
 
-#: src/class-groups-admin.php:469
+#: src/class-groups-admin.php:485
 msgid "non-editable"
 msgstr ""
 
-#: src/class-groups-admin.php:470 src/class-groups-admin.php:940
+#: src/class-groups-admin.php:486 src/class-groups-admin.php:956
 msgid "All"
 msgstr ""
 
-#: src/class-groups-admin.php:472
+#: src/class-groups-admin.php:488
 #, php-format
 msgid ""
 "is not a section editor.  Before you can assign them to a group, you must "
 "change their role to \"Section Editor\" on the %s."
 msgstr ""
 
-#: src/class-groups-admin.php:474
+#: src/class-groups-admin.php:490
 msgid "is already a member of this group."
 msgstr ""
 
-#: src/class-groups-admin.php:476
+#: src/class-groups-admin.php:492
 #, php-format
 msgid ""
 "is not a member of this site.  Please %s with the \"Section Editor\" role."
 msgstr ""
 
-#: src/class-groups-admin.php:507
+#: src/class-groups-admin.php:523
 msgid "All Groups"
 msgstr ""
 
-#: src/class-groups-admin.php:515
+#: src/class-groups-admin.php:531
 msgid "Edit Section Group"
 msgstr ""
 
-#: src/class-groups-admin.php:573
+#: src/class-groups-admin.php:589
 msgid "View all groups"
 msgstr ""
 
-#: src/class-groups-admin.php:578
+#: src/class-groups-admin.php:594
 msgid "There was an error saving the group."
 msgstr ""
 
-#: src/class-groups-admin.php:582
+#: src/class-groups-admin.php:598
 msgid "Group added."
 msgstr ""
 
-#: src/class-groups-admin.php:586
+#: src/class-groups-admin.php:602
 msgid "Group updated."
 msgstr ""
 
-#: src/class-groups-admin.php:590
+#: src/class-groups-admin.php:606
 msgid "Group deleted."
 msgstr ""
 
-#: src/class-groups-admin.php:605
+#: src/class-groups-admin.php:621
 msgid ""
 "There are currently no users on your site that are capable of being assigned "
 "to section editing groups."
 msgstr ""
 
-#: src/class-groups-admin.php:606
+#: src/class-groups-admin.php:622
 #, php-format
 msgid ""
 "To start using this plugin, visit the %s and change the role for any users "
 "you would like to add to a section editing group to \"Section Editor\"."
 msgstr ""
 
-#: src/class-groups-admin.php:720
+#: src/class-groups-admin.php:736
 msgid "Posts per page"
 msgstr ""
 
-#: src/class-groups-admin.php:798
+#: src/class-groups-admin.php:814
 #, php-format
 msgid "Edit Section Group %s"
 msgstr ""
 
-#: src/class-groups-admin.php:819
+#: src/class-groups-admin.php:835
 msgid "Add Section Group"
 msgstr ""
 

@@ -34,6 +34,10 @@ class Groups_Admin {
 
 		// Interface
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menus' ) );
+		add_action( "wp_before_admin_bar_render", array(
+		  __CLASS__,
+		  "admin_bar"
+		));
 		add_filter( 'set-screen-option', array( __CLASS__, 'manage_groups_set_screen_option' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_scripts' ) );
 
@@ -52,6 +56,18 @@ class Groups_Admin {
 			add_action( 'parse_query', array( __CLASS__, 'add_editable_query' ) );
 		}
 
+	}
+
+	public static function admin_bar() {
+	  global $wp_admin_bar;
+
+	  $wp_admin_bar->add_menu(array(
+	    "parent" => "new-content",
+	    "id" => "secdor-new-group",
+	    "title" => __( "Section Group", SECDOR_TEXTDOMAIN ),
+	    "href" => admin_url( self::NEW_GROUP_PAGE ),
+	    "meta" => false,
+	  ));
 	}
 
 	/**
