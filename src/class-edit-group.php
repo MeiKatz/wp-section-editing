@@ -246,7 +246,11 @@ class Edit_Group {
     $post = $this->to_post();
 
     // Update DB
-    $result = wp_insert_post( $post );
+    if ( $this->id() === null ) {
+      $result = wp_insert_post( $post, true );
+    } else {
+      $result = wp_update_post( $post, true );
+    }
 
     if ( is_wp_error( $result ) ) {
       error_log(

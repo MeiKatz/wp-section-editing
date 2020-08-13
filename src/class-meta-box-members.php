@@ -27,8 +27,18 @@ final class Meta_Box_Members
         <?php /* list members */ ?>
         <?php foreach ( $users as $user ): ?>
           <?php if ( $group->has_user( $user ) ): ?>
-            <li data-user-id="<?php echo $user->id(); ?>" class="is-member">
-              <?php echo $user->display_name(); ?>
+            <li data-user-id="<?php echo $user->id(); ?>">
+              <div class="secdor-member-row">
+                <div class="secdor-member-name">
+                  <?php echo $user->display_name(); ?>
+                </div>
+                <div class="secdor-member-remove">
+                  <a href="#">
+                    <span class="screen-reader-text">Mitglied entfernen</span>
+                    <i class="dashicons dashicons-no-alt"></i>
+                  </a>
+                </div>
+              </div>
             </li>
           <?php endif; ?>
         <?php endforeach; ?>
@@ -37,12 +47,8 @@ final class Meta_Box_Members
     <p>
       <label for="secdor-member-search-field" id="secdor-member-search-label" class="screen-reader-text">Mitglieder suchen</label>
       <div id="secdor-member-search" role="combobox" aria-haspopup="listbox" aria-autocomplete="list" aria-expanded="false" aria-labelledby="secdor-member-search-label">
-        <input id="secdor-member-current-id" type="hidden" />
-        <input id="secdor-member-search-field" type="text" class="widefat" />
+        <input id="secdor-member-search-field" type="text" class="widefat" placeholder="<?php esc_attr_e( "Add Member", SECDOR_TEXTDOMAIN ); ?>" />
       </div>
-    </p>
-    <p>
-      <button type="button" class="button-secondary" disabled=""><?php _e( "Add Member", SECDOR_TEXTDOMAIN ); ?></button>
     </p>
   <?php }
 }

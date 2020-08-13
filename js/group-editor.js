@@ -3,13 +3,13 @@ jQuery(document).ready(function($){
 
   var $memberSearch = $("#secdor-member-search");
   var $memberSearchField = $("#secdor-member-search-field")
-  var $userList = $("#secdor-member-list");
+  var $memberList = $("#secdor-member-list");
   var $memberCount = $(".member-count");
 
-  function getUserElement( user ) {
+  function getMemberElement( userId ) {
     return (
-      $userList
-        .find("[data-user-id=" + user.value + "]")
+      $memberList
+        .find("[data-user-id=" + userId + "]")
     );
   }
 
@@ -23,40 +23,27 @@ jQuery(document).ready(function($){
     return parseInt( match[1], 10 );
   }
 
-  var Users = {
+  var MemberList = {
+    "all": function all() {
+      var $members = $memberList.find( "li" );
+
+      return $members.map(function () {
+        var $el = $( this );
+
+        return {
+          "label": $el.text().trim(),
+          "value": parseInt($el.attr("data-user-id"), 10),
+        };
+      }).toArray();
+    },
+
     "find": function find( term ) {
       return this.all().find(function ( user ) {
         return user.label === term;
       });
     },
 
-    "all": function all() {
-      var $users = $userList.find( "li" );
-
-      return $users.map(function () {
-        var $el = $( this );
-
-        return {
-          "label": $el.text().trim(),
-          "value": parseInt($el.attr("data-user-id"), 10),
-          "isMember": $el.hasClass("is-member"),
-        };
-      }).toArray();
-    },
-  };
-
-  var MemberList = {
-    "has": function has( user ) {
-      var $el = getUserElement( user );
-
-      if ( !$el.length ) {
-        return false;
-      }
-
-      return $el.hasClass( "is-member" );
-    },
-
-    "add": function add( user ) {
+    "add": function add( userId ) {
       var group_id = getCurrentGroupId();
       var url = "/wp-admin/admin-ajax.php?action=secdor-users&group_id=" + group_id;
 
@@ -68,30 +55,69 @@ jQuery(document).ready(function($){
         },
         "body": JSON.stringify({
           "action": "add",
-          "user_id": user.value,
+          "user_id": userId,
         }),
-      }).then(() => {
+      }).then(function (res) {
+        if ( res.status < 100 || res.status >= 300 ) {
+          return Promise.reject(
+            new Error( res.statusText )
+          );
+        }
+
+        return res.json();
+      }).then(function (user) {
         var $el = $( "<li />" );
 
-        $el.addClass( "is-member" );
+        $el.html([
+          '<div class="secdor-member-row">',
+            '<div class="secdor-member-name"></div>',
+            '<div class="secdor-member-remove">',
+              '<a href="#">',
+                '<span class="screen-reader-text">Mitglied entfernen</span>',
+                '<i class="dashicons dashicons-no-alt"></i>',
+              '</a>',
+            '</div>',
+          '</div>'
+        ].join("\n"));
+
         $el.attr( "data-user-id", user.value );
-        $el.text( user.label );
+        $el.find(".secdor-member-name").text( user.label );
 
         // append element to list
-        $el.appendTo( $userList );
+        $el.appendTo( $memberList );
       });
     },
 
-    "remove": function remove( user ) {
-      var $el = getUserElement( user );
+    "remove": function remove( userId ) {
+      var group_id = getCurrentGroupId();
+      var url = "/wp-admin/admin-ajax.php?action=secdor-users&group_id=" + group_id;
 
-      $el.removeClass( "is-member" );
+      return fetch(url, {
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        "body": JSON.stringify({
+          "action": "remove",
+          "user_id": userId,
+        }),
+      }).then((res) => {
+        if ( res.status < 100 || res.status >= 300 ) {
+          return Promise.reject(
+            new Error( res.statusText )
+          );
+        }
+
+        var $el = getMemberElement( userId );
+        $el.remove();
+      });
     },
 
     "count": function count() {
       return (
-        $userList
-          .find( ".is-member" )
+        $memberList
+          .find( "li" )
           .length
       );
     },
@@ -164,8 +190,6 @@ jQuery(document).ready(function($){
         .attr("aria-selected", "true");
 
       $(this).attr("aria-activedescendant", $currentItem.prop("id"));
-
-      $("#secdor-member-current-id").val( ui.item.value );
       $(this).val( ui.item.label );
 
       return false;
@@ -173,11 +197,11 @@ jQuery(document).ready(function($){
     "select": function ( evt, ui ) {
       $memberSearchField.prop("disabled", true);
 
-      MemberList.add( ui.item )
+      MemberList.add( ui.item.value )
         .then(function () {
+          $memberSearchField.val( "" );
           $memberSearchField.prop("disabled", false);
-          $("#secdor-member-current-id").val( "" );
-          $(this).val( "" );
+          updateMemberCount();
         })
         .catch(function () {
           $memberSearchField.prop("disabled", false);
@@ -187,50 +211,23 @@ jQuery(document).ready(function($){
     },
   });
 
-  var KEY_ENTER = "Enter";
-  var KEY_LEFT = "ArrowLeft";
-  var KEY_RIGHT = "ArrowRight";
-  var KEY_UP = "ArrowUp";
-  var KEY_DOWN = "ArrowDown";
-
-  function isArrowKey( key ) {
-    return (
-      key === KEY_LEFT
-        || key === KEY_RIGHT
-        || key === KEY_UP
-        || key === KEY_DOWN
-    );
-  }
-
-  $memberSearchField.on("keydown", function (evt) {
-    if ( isArrowKey( evt.key ) ) {
-      return;
-    }
-
-    $("#secdor-member-current-id").val( "" );
-  });
-
-  $memberSearchField.on("keydown", function (evt) {
-    if ( evt.key != KEY_ENTER ) {
-      return;
-    }
-
-
-
+  $memberList.on("click", ".secdor-member-remove a", function (evt) {
     evt.preventDefault();
 
-    var term = $memberSearchField.val().trim();
-    var user = Users.find( term );
+    var $el = $( evt.target );
 
-    if ( MemberList.has( user ) ) {
-      return;
-    }
+    var userId = parseInt(
+      $el
+        .parents( "[data-user-id]" )
+        .first()
+        .attr( "data-user-id" ),
+      10
+    );
 
-    MemberList.add( user );
-
-    updateMemberCount();
-
-    $memberSearchField.val("");
+    MemberList.remove( userId )
+      .then(function () {
+        updateMemberCount();
+      });
   });
 
   var Nav;

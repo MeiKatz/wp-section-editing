@@ -2,6 +2,7 @@
 namespace Secdor;
 
 use \StdClass;
+use \WP_Http;
 
 /**
  * Centralized admin ajax routing
@@ -10,22 +11,63 @@ use \StdClass;
  * @todo AJAX nonces
  */
 class Groups_Admin_Ajax {
-
-	static public function register_hooks() {
-
-		add_action( 'wp_ajax_secdor_site_users_script', array( __CLASS__, 'site_users_script' ) );
+	public static function register_hooks() {
 		add_action(
 			"wp_ajax_secdor-users",
-			array( __CLASS__, "handle_users" )
+			array(
+				__CLASS__,
+				"handle_users",
+			)
 		);
+
 		add_action(
 			"wp_ajax_secdor-users-autocomplete",
-			array( __CLASS__, "handle_users_autocomplete" )
+			array(
+				__CLASS__,
+				"handle_users_autocomplete",
+			)
 		);
-		add_action( 'wp_ajax_secdor_search_posts', array( __CLASS__, 'search_posts' ) );
-		add_action( 'wp_ajax_secdor_render_post_list', array( __CLASS__, 'render_post_list' ) );
-		add_action( 'wp_ajax_secdor_can_edit', array( __CLASS__, 'can_edit' ) );
-		add_action( 'wp_ajax_secdor_can_move', array( __CLASS__, 'can_move' ) );
+
+		// legacy actions
+		add_action(
+			"wp_ajax_secdor_site_users_script",
+			array(
+				__CLASS__,
+				"site_users_script",
+			)
+		);
+
+		add_action(
+			"wp_ajax_secdor_search_posts",
+			array(
+				__CLASS__,
+				"search_posts",
+			)
+		);
+
+		add_action(
+			"wp_ajax_secdor_render_post_list",
+			array(
+				__CLASS__,
+				"render_post_list",
+			)
+		);
+
+		add_action(
+			"wp_ajax_secdor_can_edit",
+			array(
+				__CLASS__,
+				"can_edit",
+			)
+		);
+
+		add_action(
+			"wp_ajax_secdor_can_move",
+			array(
+				__CLASS__,
+				"can_move",
+			)
+		);
 	}
 
 	public static function handle_users_autocomplete() {
@@ -41,25 +83,23 @@ class Groups_Admin_Ajax {
 
 		$current_group = self::get_current_group();
 
-		if ( $current_group === false || $current_group === null ) {
-			header( "Content-Type: application/json" );
-			http_send_status( 400 );
-			die();
+		if ( $current_group !== null ) {
+			$users = array_filter(
+				$users,
+				function ( $user ) use ( $current_group ) {
+					return !$current_group->has_user( $user );
+				}
+			);
 		}
 
-		$users = array_filter(
-			$users,
-			function ( $user ) use ( $current_group ) {
-				return !$current_group->has_user( $user );
-			}
-		);
 
 		$users = self::filter_users( $users, $term );
 		$users = self::format_users( $users );
 
-		header( "Content-Type: application/json" );
-		echo json_encode( $users );
-		die();
+		return self::send_json(
+			WP_Http::OK,
+			$users
+		);
 	}
 
 	public static function handle_users() {
@@ -87,10 +127,9 @@ class Groups_Admin_Ajax {
 	}
 
 	private static function method_not_allowed() {
-		header( "Content-type: application/json" );
-		http_send_status( 405 );
-		echo json_encode( null );
-		die();
+		return self::send_json(
+			WP_Http::METHOD_NOT_ALLOWED
+		);
 	}
 
 	private static function show_users() {
@@ -105,35 +144,72 @@ class Groups_Admin_Ajax {
 		$users = self::filter_users( $users, $term );
 		$users = self::format_users( $users );
 
-		header( "Content-Type: application/json" );
-		echo json_encode( $users );
-		die();
+		return self::send_json(
+			WP_Http::OK,
+			$users
+		);
 	}
 
 	private static function add_user() {
 		$data = self::get_body();
 
 		$user = Edit_User::find( $data[ "user_id" ] );
+		$current_group = self::get_current_group();
 
-		if ( $user === null ) {
-			header( "Content-Type: application/json" );
-			http_send_status( 404 );
-			die();
+		if ( $user === null || $current_group === null ) {
+			return self::send_json(
+				WP_Http::BAD_REQUEST
+			);
 		}
 
-		header( "Content-Type: application/json" );
-		echo json_encode( $data );
-		die();
+		$current_group->add_user( $user );
+
+		if ( !$current_group->save() ) {
+			return self::send_json(
+				WP_Http::INTERNAL_SERVER_ERROR
+			);
+		}
+
+		return self::send_json(
+			WP_Http::OK,
+			array(
+				"label" => $user->full_name(),
+				"value" => $user->id(),
+				"id" => $user->id(),
+				"email_address" => $user->email_address(),
+			)
+		);
 	}
 
 	private static function remove_user() {
-		$user = Edit_User::find( $_POST[ "user_id" ] );
+		$data = self::get_body();
 
-		if ( $user === null ) {
-			header( "Content-Type: application/json" );
-			http_send_status( 404 );
-			die();
+		$user = Edit_User::find( $data[ "user_id" ] );
+		$current_group = self::get_current_group();
+
+		if ( $user === null || $current_group === null ) {
+			return self::send_json(
+				WP_Http::BAD_REQUEST
+			);
 		}
+
+		$current_group->remove_user( $user );
+
+		if ( !$current_group->save() ) {
+			return self::send_json(
+				WP_Http::INTERNAL_SERVER_ERROR
+			);
+		}
+
+		return self::send_json(
+			WP_Http::OK,
+			array(
+				"label" => $user->full_name(),
+				"value" => $user->id(),
+				"id" => $user->id(),
+				"email_address" => $user->email_address(),
+			)
+		);
 	}
 
 	/**
@@ -324,10 +400,9 @@ class Groups_Admin_Ajax {
 
 	private static function assert_ajax() {
 		if ( !defined( "DOING_AJAX" ) || !DOING_AJAX ) {
-			header( "Content-Type: application/json" );
-			http_send_status( 403 );
-			echo json_encode( null );
-			die();
+			return self::send_json(
+				WP_Http::FORBIDDEN
+			);
 		}
 	}
 
@@ -361,6 +436,18 @@ class Groups_Admin_Ajax {
 		}, $users );
 	}
 
+	private static function send_json(
+		$status_code,
+		$data = null
+	) {
+		header( "Content-Type: application/json" );
+		http_response_code( $status_code );
+
+		echo json_encode( $data );
+
+		die();
+	}
+
 	private static function get_group_id() {
 		if ( isset( $_GET[ "group_id" ] ) ) {
 			return intval( $_GET[ "group_id" ] );
@@ -377,7 +464,13 @@ class Groups_Admin_Ajax {
 		}
 
 		$groups = Edit_Groups::get_instance();
-		return $groups->get( $group_id );
+		$group = $groups->get( $group_id );
+
+		if ( $group === null || $group === false ) {
+			return null;
+		}
+
+		return $group;
 	}
 
 	private static function get_body() {

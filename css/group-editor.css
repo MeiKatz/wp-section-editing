@@ -160,6 +160,20 @@
 	margin: -.1875rem -.3125rem;
 }
 
+.secdor-member-row {
+	display: table;
+	width: 100%;
+}
+
+.secdor-member-name {
+	display: table-cell;
+}
+
+.secdor-member-remove {
+	display: table-cell;
+	width: 20px;
+}
+
 .secdor-row-inner {
 	display: table-cell;
 	vertical-align: middle;
