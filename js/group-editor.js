@@ -9,14 +9,14 @@ jQuery(document).ready(function($){
 
 	// Globals
 	var $members_list = $('#group-member-list');
-	var $nav_links = $('a.nav-link');
+	var $nav_links = $(".subsubsub a");
 
 	// _______________________ Navigation Tabs ________________________
 
 	$nav_links.click(function(e){
 		e.preventDefault();
 
-		var $tab = $('a.nav-tab[href="' + this.hash + '"]');
+		var $tab = $(".subsubsub li").has('a[href="' + this.hash + '"]');
 		var $target = $(this.hash);
 
 		// Update hidden inputs
@@ -24,7 +24,17 @@ jQuery(document).ready(function($){
 		$input.val($tab.data('target'));
 
 		// Switch panels
-		$tab.addClass('nav-tab-active').siblings().removeClass('nav-tab-active');
+		$tab
+			.find("a")
+				.addClass("current")
+				.attr("aria-current", "page")
+				.attr("aria-selected", "true");
+		$tab
+			.siblings()
+				.find("a")
+					.removeClass("current")
+					.removeAttr("aria-current")
+					.attr("aria-selected", "false");
 		$target.addClass('active').siblings().removeClass('active');
 
 	});

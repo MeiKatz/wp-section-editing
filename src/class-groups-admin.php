@@ -794,9 +794,8 @@ class Groups_Admin {
 			case self::MANAGE_GROUPS_SLUG:
 
 				if ( $group_id > 0 ) {
-
 					$group = $groups->get( $group_id );
-					$page_title = __( 'Edit Section Group', SECDOR_TEXTDOMAIN );
+					$page_title = sprintf( esc_html__( 'Edit Section Group %s', SECDOR_TEXTDOMAIN ), $group->name() );
 					$template_path = sprintf(
 						"%s/%s",
 						SECDOR_PLUGIN_BASE,

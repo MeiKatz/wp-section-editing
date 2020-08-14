@@ -104,6 +104,10 @@ class Edit_Group {
     return $this->id;
   }
 
+  public function name() {
+    return $this->name;
+  }
+
   /**
    * Returns an array with default parameter values for edit group
    *

@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: Secdor Section Editing 0.9.8\n"
 "Report-Msgid-Bugs-To: https://github.com/MeiKatz/secdor-section-"
 "editing/issues\n"
-"POT-Creation-Date: 2020-08-21 18:35+0200\n"
-"PO-Revision-Date: 2020-08-21 18:35+0100\n"
+"POT-Creation-Date: 2020-08-25 11:05+0200\n"
+"PO-Revision-Date: 2020-08-25 11:05+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,43 +17,56 @@ msgstr ""
 "Plural-Forms: plurals=2; plural=(n > 1)\n"
 "X-Generator: Eazy Po 0.9.5.3\n"
 
-#: interface/edit-group.php:8
+#: interface/edit-group.php:7 interface/groups.php:6
+#: src/class-groups-admin.php:516
+msgid "Add New"
+msgstr ""
+
+#: interface/edit-group.php:20
 msgid "Properties"
 msgstr ""
 
-#: interface/edit-group.php:9 interface/group-stats.php:7
+#: interface/edit-group.php:30
 msgid "Members"
 msgstr ""
 
-#: interface/edit-group.php:10
+#: interface/edit-group.php:40
 msgid "Permissions"
+msgstr ""
+
+#: interface/edit-group.php:69 interface/group-stats.php:14
+msgid "Add Group"
+msgstr ""
+
+#: interface/edit-group.php:73 interface/group-stats.php:18
+msgid "Update Group"
 msgstr ""
 
 #: interface/group-members.php:3
 msgid "Add User to this Group"
 msgstr ""
 
-#: interface/group-members.php:8
+#: interface/group-members.php:9
 msgid ""
 "Enter the email address of an existing user on this network to add them to "
 "this Editor Group."
 msgstr ""
 
-#: interface/group-members.php:10
+#: interface/group-members.php:11
 msgid "Add"
 msgstr ""
 
-#: interface/group-members.php:18 src/class-groups-admin.php:457
+#: interface/group-members.php:19 src/class-groups-admin.php:457
 msgid "member"
 msgid_plural "members"
 msgstr[0] ""
 msgstr[1] ""
 
-#: interface/group-members.php:20
+#: interface/group-members.php:21
 msgid "Group Member List"
 msgstr ""
 
-#: interface/group-members.php:28
+#: interface/group-members.php:29
 msgid "Remove"
 msgstr ""
 
@@ -118,8 +131,7 @@ msgstr ""
 msgid "Go to the last page"
 msgstr ""
 
-#: interface/group-properties.php:3 interface/group-stats.php:6
-#: src/class-group-list-table.php:9
+#: interface/group-properties.php:3 src/class-group-list-table.php:9
 msgid "Name"
 msgstr ""
 
@@ -127,38 +139,18 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: interface/group-stats.php:2
+#: interface/group-stats.php:3
 msgid "Modify Group"
 msgstr ""
 
-#: interface/group-stats.php:8
-msgid "Permission to Edit"
-msgstr ""
-
-#: interface/group-stats.php:13
-msgid "Add Group"
-msgstr ""
-
-#: interface/group-stats.php:18
-msgid "Delete group"
-msgstr ""
-
-#: interface/group-stats.php:18 src/class-group-list-table.php:32
-msgid "Delete"
-msgstr ""
-
-#: interface/group-stats.php:21
-msgid "Update Group"
+#: interface/group-stats.php:9 src/class-group-list-table.php:12
+msgid "Editable entries"
 msgstr ""
 
 #: interface/groups.php:3 src/class-groups-admin.php:62
 #: src/class-groups-admin.php:495 src/class-groups-admin.php:496
 #: src/class-groups-admin.php:506
 msgid "Section Groups"
-msgstr ""
-
-#: interface/groups.php:6 src/class-groups-admin.php:516
-msgid "Add New"
 msgstr ""
 
 #: src/class-edit-groups.php:53
@@ -197,12 +189,12 @@ msgstr ""
 msgid "Members count"
 msgstr ""
 
-#: src/class-group-list-table.php:12
-msgid "Editable entries"
-msgstr ""
-
 #: src/class-group-list-table.php:27
 msgid "Edit"
+msgstr ""
+
+#: src/class-group-list-table.php:32
+msgid "Delete"
 msgstr ""
 
 #: src/class-groups-admin.php:109
@@ -310,7 +302,7 @@ msgstr ""
 msgid "non-editable"
 msgstr ""
 
-#: src/class-groups-admin.php:470 src/class-groups-admin.php:941
+#: src/class-groups-admin.php:470 src/class-groups-admin.php:940
 msgid "All"
 msgstr ""
 
@@ -335,7 +327,7 @@ msgstr ""
 msgid "All Groups"
 msgstr ""
 
-#: src/class-groups-admin.php:515 src/class-groups-admin.php:799
+#: src/class-groups-admin.php:515
 msgid "Edit Section Group"
 msgstr ""
 
@@ -376,7 +368,12 @@ msgstr ""
 msgid "Posts per page"
 msgstr ""
 
-#: src/class-groups-admin.php:820
+#: src/class-groups-admin.php:798
+#, php-format
+msgid "Edit Section Group %s"
+msgstr ""
+
+#: src/class-groups-admin.php:819
 msgid "Add Section Group"
 msgstr ""
 

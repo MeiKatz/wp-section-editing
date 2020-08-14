@@ -1,8 +1,9 @@
 <div id="add-group-members" class="secdor-widget">
-	<div class="secdor-widget-header">
-		<h4 id="add-group-members-header"><?php _e( 'Add User to this Group', SECDOR_TEXTDOMAIN ); ?></h4>
-	</div>
-	<div class="secdor-widget-body">
+	<h1 class="wp-heading-inline">
+		<?php _e( "Add User to this Group", SECDOR_TEXTDOMAIN ); ?>
+	</h1>
+	<hr class="wp-header-end" />
+	<div class="buse-widget-body">
 		<div id="members-message" ></div>
 		<div class="form-field">
 			<label for="user_login"><?php _e( 'Enter the email address of an existing user on this network to add them to this Editor Group.', SECDOR_TEXTDOMAIN ); ?></label>

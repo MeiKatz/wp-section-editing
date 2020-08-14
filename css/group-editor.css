@@ -8,29 +8,15 @@
 	margin-bottom: 0;
 }
 
-#stats-container {
-	position: relative;
-	width: 350px;
-	padding-top: 2em;
-	padding-left: 25px;
-	float: right;
-	clear: right;
-	z-index: 20;
-}
-
 #panel-container {
 	width: 100%;
 	height: auto;
-	float: left;
 	clear: left;
-	margin-right: -375px;
 	position: relative;
 }
 
 .group-panel {
-	min-height: 400px;
 	padding-top: 2em;
-	margin-right: 375px;
 }
 
 /* Members panel */
@@ -695,6 +681,14 @@ body.section-groups_page_secdor_new_group .ui-autocomplete .ui-state-focus {
 #section-group-editor .ui-autocomplete-input.open {
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 0;
+}
+
+.subsubsub li::after {
+	content: " | ";
+}
+
+.subsubsub li:last-child::after {
+	content: none;
 }
 
 /* IE7 friendly clearing */
