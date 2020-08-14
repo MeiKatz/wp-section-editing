@@ -573,12 +573,6 @@
 	border-top: none;
 }
 
-/* Groups table */
-
-#section-groups td {
-	padding: 10px 7px;
-}
-
 /* Member counts */
 
 #member-list-count {

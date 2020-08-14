@@ -1,26 +1,19 @@
 <div class="wrap">
-	<div id="icon-section-groups" class="icon32"></div>
-	<h2><?php _e( 'Section Groups', SECDOR_TEXTDOMAIN ); ?></h2>
-	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', SECDOR_TEXTDOMAIN ); ?></a></p>
-	<table id="section-groups" class="wp-list-table widefat">
+	<h1 class="wp-heading-inline">
+		<?php _e( "Section Groups", SECDOR_TEXTDOMAIN ); ?>
+	</h1>
+	<a href="<?php echo Secdor\Groups_Admin::manage_groups_url( "add" ); ?>" class="page-title-action">
+		<?php _e( "Add New", SECDOR_TEXTDOMAIN ); ?>
+	</a>
+	<table id="section-groups" class="wp-list-table widefat fixed striped">
 		<thead>
 			<tr>
-				<th><?php _e( 'Name', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Description', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Members', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Editable', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Remove', SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column"><?php _e( "Name", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column"><?php _e( "Description", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column num"><?php _e( "Members", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column"><?php _e( "Editable", SECDOR_TEXTDOMAIN ); ?></th>
 			</tr>
 		</thead>
-		<tfoot>
-			<tr>
-				<th><?php _e( 'Name', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Description', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Members', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Editable', SECDOR_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Remove', SECDOR_TEXTDOMAIN ); ?></th>
-			</tr>
-		</tfoot>
 		<tbody>
 		<?php if ( $group_list->have_groups() ) : ?>
 			<?php $count = 0; ?>
@@ -31,19 +24,30 @@
 			$description = (strlen( $group->description ) > 60) ? substr( $group->description, 0, 60 ) . ' [...]' : $group->description;
 			?>
 			<tr <?php echo $li_class; ?>>
-				<td><a href="<?php echo $edit_url ?>"><?php echo $group->name; ?></a></td>
-				<td><?php echo $description; ?></td>
-				<td><?php echo count( $group->users ); ?></td>
-				<td><?php echo Secdor\Groups_Admin::group_permissions_string( $group ); ?></td>
-				<td>
-					<a class="submitdelete" href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'delete', array( 'id' => $group->id ) ); ?>">
-					<img src="<?php echo plugins_url( SECDOR_PLUGIN_PATH . '/images/group_remove.png' ); ?>" alt="<?php esc_attr_e( 'Delete', SECDOR_TEXTDOMAIN ); ?>"></a>
+				<td class="has-row-actions">
+					<a href="<?php esc_attr_e( $edit_url ); ?>"><?php esc_html_e( $group->name ); ?></a>
+					<br />
+					<div class="row-actions">
+						<span class="edit"><a href="<?php esc_attr_e( $edit_url ); ?>">Bearbeiten</a>
+						<span> | </span>
+						<span class="delete"><a class="submitdelete" href="<?php echo Secdor\Groups_Admin::manage_groups_url( "delete", array( "id" => $group->id ) ); ?>"><?php _e( "Remove", SECDOR_TEXTDOMAIN ); ?></a></span>
+					</div>
 				</td>
+				<td><?php esc_html_e( $description ); ?></td>
+				<td class="num"><?php echo count( $group->users ); ?></td>
+				<td><?php echo Secdor\Groups_Admin::group_permissions_string( $group ); ?></td>
 			</tr>
 			<?php $count++; ?>
 			<?php endwhile; ?>
 		<?php endif; ?>
 		</tbody>
+		<tfoot>
+			<tr>
+				<th class="manage-column"><?php _e( "Name", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column"><?php _e( "Description", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column num"><?php _e( "Members", SECDOR_TEXTDOMAIN ); ?></th>
+				<th class="manage-column"><?php _e( "Editable", SECDOR_TEXTDOMAIN ); ?></th>
+			</tr>
+		</tfoot>
 	</table>
-	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', SECDOR_TEXTDOMAIN ); ?></a></p>
 </div>
