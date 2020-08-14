@@ -382,7 +382,7 @@ class BU_Groups_Admin {
 			if ( ! wp_script_is( 'jquery-ui-autocomplete', 'registered' ) ) {
 
 				// Register local fallback copy of autocomplete
-				wp_register_script( 'jquery-ui-autocomplete', plugins_url( '/js/vendor/jquery.ui.autocomplete'.$suffix.'.js', __FILE__ ), array( 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position' ), '1.8.23', true );
+				wp_register_script( 'jquery-ui-autocomplete', plugins_url( '/js/vendor/jquery.ui.autocomplete'.$suffix.'.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position' ), '1.8.23', true );
 
 			}
 
@@ -391,15 +391,15 @@ class BU_Groups_Admin {
 			wp_enqueue_script( 'buse-site-users', admin_url( 'admin-ajax.php?action=buse_site_users_script' ), array(), null );
 
 			// Group editor
-			wp_enqueue_script( 'group-editor', plugins_url( '/js/group-editor' . $suffix . '.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete' ), $version, true );
-			wp_localize_script( 'group-editor', 'buse_group_editor_settings', array_merge( array( 'pluginUrl' => plugins_url( BUSE_PLUGIN_PATH ) ), self::group_editor_i10n() ) );
+			wp_enqueue_script( 'group-editor', plugins_url( '/js/group-editor' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'jquery', 'jquery-ui-autocomplete' ), $version, true );
+			wp_localize_script( 'group-editor', 'buse_group_editor_settings', array_merge( array( 'pluginUrl' => plugins_url( "", BUSE_PLUGIN_ENTRYPOINT ) ), self::group_editor_i10n() ) );
 
 			// Hierarchical permissions editor script
 			// Hierarchical permission editor depends on the BU Navigation plugin's BU_Navigation_Tree_View class
 			// @todo git rid of hierarchical permissions class, just use BU_Navigation_Tree_View / Query with filters as needed
 			if ( class_exists( 'BU_Navigation_Tree_View' ) ) {
 
-				wp_register_script( 'tree-perm-editor', plugins_url( '/js/tree-perm-editor' . $suffix . '.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete', 'bu-navigation' ), $version, true );
+				wp_register_script( 'tree-perm-editor', plugins_url( '/js/tree-perm-editor' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'jquery', 'jquery-ui-autocomplete', 'bu-navigation' ), $version, true );
 
 				$script_context = array(
 					'postStatuses' => array( 'publish' ),
@@ -419,7 +419,7 @@ class BU_Groups_Admin {
 
 			}
 
-			wp_enqueue_style( 'group-editor', plugins_url( '/css/group-editor.css', __FILE__ ), array(), $version );
+			wp_enqueue_style( 'group-editor', plugins_url( '/css/group-editor.css', BUSE_PLUGIN_ENTRYPOINT ), array(), $version );
 
 		}
 
@@ -430,7 +430,7 @@ class BU_Groups_Admin {
 				'cantMovePostNotice' => __( 'You are not able to edit the parent, so you cannot place this page under the parent.', BUSE_TEXTDOMAIN ),
 				'publishLabel' => __( 'Published', BUSE_TEXTDOMAIN ),
 				);
-			wp_enqueue_script( 'bu-section-editor-post', plugins_url( '/js/section-editor-post' . $suffix . '.js', __FILE__ ), array( 'jquery' ), $version, true );
+			wp_enqueue_script( 'bu-section-editor-post', plugins_url( '/js/section-editor-post' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'jquery' ), $version, true );
 			wp_localize_script( 'bu-section-editor-post', 'buse_post', $strings );
 		}
 
@@ -486,7 +486,7 @@ class BU_Groups_Admin {
 	public static function admin_menus() {
 		global $wp_version;
 
-		$menu_icon = plugins_url( '/images/pages-menu-icon-16.png', __FILE__ );
+		$menu_icon = plugins_url( '/images/pages-menu-icon-16.png', BUSE_PLUGIN_ENTRYPOINT );
 		if ( version_compare( $wp_version, '3.8', '>=' ) ) {
 			$menu_icon = 'dashicons-forms';
 		}
@@ -797,13 +797,20 @@ class BU_Groups_Admin {
 
 					$group = $groups->get( $group_id );
 					$page_title = __( 'Edit Section Group', BUSE_TEXTDOMAIN );
-					$template_path = 'interface/edit-group.php';
-
+					$template_path = sprintf(
+						"%s/%s",
+						BUSE_PLUGIN_BASE,
+						"interface/edit-group.php"
+					);
 				} else {
 
 					$group_list = new BU_Groups_List();
-					$template_path = 'interface/groups.php';
 
+					$template_path = sprintf(
+						"%s/%s",
+						BUSE_PLUGIN_BASE,
+						"interface/groups.php"
+					);
 				}
 				break;
 
@@ -811,7 +818,13 @@ class BU_Groups_Admin {
 			case self::NEW_GROUP_SLUG:
 				$group = new BU_Edit_Group();
 				$page_title = __( 'Add Section Group', BUSE_TEXTDOMAIN );
-				$template_path = 'interface/edit-group.php';
+
+				$template_path = sprintf(
+					"%s/%s",
+					BUSE_PLUGIN_BASE,
+					"interface/edit-group.php"
+				);
+
 				break;
 		}
 

@@ -21,12 +21,18 @@
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<file>bu-section-editing.php</file>
-			<file>admin.groups.php</file>
-			<file>admin-ajax.groups.php</file>
-			<file>classes.capabilities.php</file>
-			<file>classes.groups.php</file>
-			<file>classes.permissions.php</file>
-			<file>classes.upgrade.php</file>
+			<file>src/class-edit-group.php</file>
+			<file>src/class-edit-groups.php</file>
+			<file>src/class-flat-permissions-editor.php</file>
+			<file>src/class-group-permissions.php</file>
+			<file>src/class-groups-admin-ajax.php</file>
+			<file>src/class-groups-admin.php</file>
+			<file>src/class-groups-list.php</file>
+			<file>src/class-hierarchical-permissions-editor.php</file>
+			<file>src/class-permissions-editor.php</file>
+			<file>src/class-section-capabilities.php</file>
+			<file>src/class-section-editing-plugin.php</file>
+			<file>src/class-section-editing-upgrader.php</file>
 		</whitelist>
 	</filter>
 </phpunit>

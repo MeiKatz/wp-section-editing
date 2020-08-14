@@ -21,11 +21,11 @@ function buse_bu_navigation_scripts() {
 	$screen = get_current_screen();
 	$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-	wp_enqueue_script( 'section-editor-nav', plugins_url( 'js/section-editor-nav' . $suffix . '.js', __FILE__ ), array( 'bu-navigation' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
+	wp_enqueue_script( 'section-editor-nav', plugins_url( 'js/section-editor-nav' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
 
 	if ( function_exists( 'bu_navigation_supported_post_types' ) ) {
 		if ( 'post' == $screen->base && in_array( $screen->post_type, bu_navigation_supported_post_types() ) ) {
-			wp_enqueue_script( 'section-editor-nav-metabox', plugins_url( 'js/section-editor-nav-metabox' . $suffix . '.js', __FILE__ ), array( 'bu-navigation-metabox' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
+			wp_enqueue_script( 'section-editor-nav-metabox', plugins_url( 'js/section-editor-nav-metabox' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation-metabox' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
 		}
 	}
 }
