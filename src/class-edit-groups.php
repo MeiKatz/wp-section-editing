@@ -1,11 +1,14 @@
 <?php
+namespace Secdor;
+
+use \StdClass;
 
 /**
  * Section editor group controller
  *
  * @todo investigate replacing in-memory groups store with cache API
  */
-class BU_Edit_Groups {
+class Edit_Groups {
 
 	const POST_TYPE_NAME = 'buse_group';
 	const MEMBER_KEY = '_bu_section_group_users';
@@ -32,11 +35,11 @@ class BU_Edit_Groups {
 	 */
 	static public function get_instance() {
 
-		if ( ! isset( BU_Edit_Groups::$instance ) ) {
-			BU_Edit_Groups::$instance = new BU_Edit_Groups();
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
 		}
 
-		return BU_Edit_Groups::$instance;
+		return self::$instance;
 	}
 
 	static public function register_hooks() {
@@ -83,7 +86,7 @@ class BU_Edit_Groups {
 	 * Returns a group by ID from internal groups array
 	 *
 	 * @param int $id unique ID of section group to return
-	 * @return BU_Edit_Group|bool the requested section group object, or false on bad ID
+	 * @return Secdor\Edit_Group|bool the requested section group object, or false on bad ID
 	 */
 	public function get( $id ) {
 
@@ -99,11 +102,11 @@ class BU_Edit_Groups {
 	/**
 	 * Add a group object to the internal groups array
 	 *
-	 * @param BU_Edit_Group $group a valid section editing group object
+	 * @param Secdor\Edit_Group $group a valid section editing group object
 	 */
 	public function add( $group ) {
 
-		if ( ! $group instanceof BU_Edit_Group ) {
+		if ( ! $group instanceof Edit_Group ) {
 			return false;
 		}
 
@@ -115,7 +118,7 @@ class BU_Edit_Groups {
 	 * Remove a group by ID from the internal groups array
 	 *
 	 * @param int $id unique ID of section group to delete
-	 * @return BU_Edit_Group|bool the deleted section group object on success, otherwise false
+	 * @return Secdor\Edit_Group|bool the deleted section group object on success, otherwise false
 	 */
 	public function delete( $id ) {
 
@@ -161,7 +164,7 @@ class BU_Edit_Groups {
 	 * Add a new section editing group
 	 *
 	 * @param array $data an array of parameters for group initialization
-	 * @return BU_Edit_Group the group that was just added
+	 * @return Secdor\Edit_Group the group that was just added
 	 */
 	public function add_group( $data ) {
 
@@ -171,13 +174,13 @@ class BU_Edit_Groups {
 		// Create new group from args
 		$group = $this->insert( $data );
 
-		if ( ! $group instanceof BU_Edit_Group ) {
+		if ( ! $group instanceof Secdor\Edit_Group ) {
 			return false;
 		}
 
 		// Set permissions
 		if ( isset( $data['perms'] ) ) {
-			BU_Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
+			Secdor\Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
 		}
 
 		// Notify
@@ -192,7 +195,7 @@ class BU_Edit_Groups {
 	 *
 	 * @param int   $id the id of the group to update
 	 * @param array $data an array of parameters with group fields to update
-	 * @return BU_Edit_Group|bool the group that was just updated or false if none existed
+	 * @return Secdor\Edit_Group|bool the group that was just updated or false if none existed
 	 */
 	public function update_group( $id, $data = array() ) {
 
@@ -206,13 +209,13 @@ class BU_Edit_Groups {
 		// Update group.
 		$group = $this->update( $id, $data );
 
-		if ( ! $group instanceof BU_Edit_Group ) {
+		if ( ! $group instanceof Secdor\Edit_Group ) {
 			return false;
 		}
 
 		// Update permissions.
 		if ( isset( $data['perms'] ) ) {
-			BU_Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
+			Secdor\Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
 		}
 
 		return $group;
@@ -243,7 +246,7 @@ class BU_Edit_Groups {
 		}
 
 		// Remove group permissions.
-		BU_Group_Permissions::delete_group_permissions( $id );
+		Secdor\Group_Permissions::delete_group_permissions( $id );
 
 		return true;
 
@@ -278,7 +281,7 @@ class BU_Edit_Groups {
 	 *
 	 * @todo remove this if it unused
 	 *
-	 * @param array $groups an array of BU_Edit_Group objects to check
+	 * @param array $groups an array of Secdor\Edit_Group objects to check
 	 * @param int   $user_id WordPress user id to check
 	 */
 	public function has_user( $groups, $user_id ) {
@@ -303,7 +306,7 @@ class BU_Edit_Groups {
 	 * Get allowed post ids, optionally filtered by user ID, group or post_type
 	 *
 	 * @todo implement caching with md5 of args
-	 * @todo possibly move to BU_Group_Permissions
+	 * @todo possibly move to Secdor\Group_Permissions
 	 *
 	 * @param $args array optional args
 	 *
@@ -397,7 +400,7 @@ class BU_Edit_Groups {
 		// Prepare the first section of the SQL statement.
 		$count_query = $wpdb->prepare(
 			"SELECT ID FROM {$wpdb->posts} WHERE ( ID IN ( SELECT post_ID FROM {$wpdb->postmeta} WHERE meta_key = %s",
-			BU_Group_Permissions::META_KEY
+			Group_Permissions::META_KEY
 		);
 
 		// Build the remaining SQL from previously prepared statements. The `group_ids` array is forced to integer values for safety.
@@ -487,12 +490,12 @@ class BU_Edit_Groups {
 	 * @todo test coverage
 	 *
 	 * @param array $data a parameter list of group data for insertion
-	 * @return bool|BU_Edit_Group False on failure.  A BU_Edit_Group instance for the new group on success.
+	 * @return bool|Secdor\Edit_Group False on failure.  A Secdor\Edit_Group instance for the new group on success.
 	 */
 	protected function insert( $data ) {
 
 		// Create new group
-		$group = new BU_Edit_Group( $data );
+		$group = new Edit_Group( $data );
 
 		// Map group data to post for insertion
 		$postdata = $this->_group_to_post( $group );
@@ -526,14 +529,14 @@ class BU_Edit_Groups {
 	 *
 	 * @param int   $id ID of group to update
 	 * @param array $data a parameter list of group data for update
-	 * @return bool|BU_Edit_Group False on failure.  A BU_Edit_Group instance for the updated group on success.
+	 * @return bool|Secdor\Edit_Group False on failure.  A Secdor\Edit_Group instance for the updated group on success.
 	 */
 	 protected function update( $id, $data ) {
 
 	 	// Fetch existing group
 		$group = $this->get( $id );
 
-		if ( ! $group instanceof BU_Edit_Group ) {
+		if ( ! $group instanceof Edit_Group ) {
 			return false;
 		}
 
@@ -627,12 +630,12 @@ class BU_Edit_Groups {
 	/**
 	 * Maps a group object to post object
 	 *
-	 * @param BU_Edit_Group $group Group object for translation
+	 * @param Secdor\Edit_Group $group Group object for translation
 	 * @return StdClass $post Resulting post object
 	 */
 	protected function _group_to_post( $group ) {
 
-		$post = new stdClass();
+		$post = new StdClass();
 
 		if ( $group->id > 0 ) {
 			$post->ID = $group->id;
@@ -651,7 +654,7 @@ class BU_Edit_Groups {
 	 * Maps a WP post object to group object
 	 *
 	 * @param StdClass $post Post object for translation
-	 * @return BU_Edit_Group $group Resulting group object
+	 * @return Secdor\Edit_Group $group Resulting group object
 	 */
 	protected function _post_to_group( $post ) {
 
@@ -670,7 +673,7 @@ class BU_Edit_Groups {
 		$data['global_edit'] = $global_edit;
 
 		// Create a new group
-		$group = new BU_Edit_Group( $data );
+		$group = new Edit_Group( $data );
 
 		return $group;
 
@@ -693,7 +696,7 @@ class BU_Edit_Groups {
 			$post_type = $post;
 		}
 
-		$global_edit = get_post_meta( $group_id, BU_Edit_Groups::GLOBAL_EDIT, true);
+		$global_edit = get_post_meta( $group_id, Edit_Groups::GLOBAL_EDIT, true);
 
 		return is_array( $global_edit ) && in_array( $post_type, $global_edit );
 	}

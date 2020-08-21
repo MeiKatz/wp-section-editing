@@ -1,12 +1,11 @@
 <?php
-
 /**
- * More traditional unit tests against the BU_Edit_Group class
+ * More traditional unit tests against the Secdor\Edit_Group class
  *
  * @group bu
  * @group bu-section-editing
  **/
-class Test_BU_Edit_Group extends WP_UnitTestCase {
+class Test_Secdor_Edit_Group extends WP_UnitTestCase {
 
 
 	function test_constructor() {
@@ -17,7 +16,7 @@ class Test_BU_Edit_Group extends WP_UnitTestCase {
 			'users' => array( 1,2 ),
 			);
 
-		$group = new BU_Edit_Group( $groupdata );
+		$group = new Secdor\Edit_Group( $groupdata );
 
 		$this->assertEquals( $groupdata['name'], $group->name );
 		$this->assertEquals( $groupdata['description'], $group->description );
@@ -35,7 +34,7 @@ class Test_BU_Edit_Group extends WP_UnitTestCase {
 			'users' => array( 1,2 ),
 			);
 
-		$group = new BU_Edit_Group( $groupdata );
+		$group = new Secdor\Edit_Group( $groupdata );
 
 		$this->assertTrue( $group->has_user( 1 ) );
 		$this->assertFalse( $group->has_user( 3 ) );
@@ -52,7 +51,7 @@ class Test_BU_Edit_Group extends WP_UnitTestCase {
 			'users' => array( 1,2 ),
 			);
 
-		$group = new BU_Edit_Group( $groupdata );
+		$group = new Secdor\Edit_Group( $groupdata );
 
 		$this->assertTrue( $group->has_user( 2 ) );
 
@@ -73,7 +72,7 @@ class Test_BU_Edit_Group extends WP_UnitTestCase {
 			'users' => array( 1,2 ),
 			);
 
-		$group = new BU_Edit_Group( $groupdata );
+		$group = new Secdor\Edit_Group( $groupdata );
 
 		$this->assertEquals( $groupdata['name'], $group->name );
 		$this->assertEquals( $groupdata['description'], $group->description );

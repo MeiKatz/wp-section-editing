@@ -4,14 +4,14 @@
  * @group bu
  * @group bu-section-editing
  **/
-class Test_BU_Section_Editing_Caps extends WP_UnitTestCase {
+class Test_Secdor_Section_Editing_Caps extends WP_UnitTestCase {
 
 	function setUp() {
 		parent::setUp();
 
 		// Ensure that the section editor role exists
 		// TODO: This shouldn't be this hard
-		$upgrader = new BU_Section_Editing_Upgrader();
+		$upgrader = new Secdor\Section_Editing_Upgrader();
 		$upgrader->populate_roles();
 
 		$this->groups 	= array();
@@ -93,7 +93,7 @@ class Test_BU_Section_Editing_Caps extends WP_UnitTestCase {
 
 	function tearDown() {
 		parent::tearDown();
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Secdor\Edit_Groups::get_instance();
 		foreach ( $this->groups as $group ) {
 			$this->deleteGroup( $group->id );
 		}
@@ -308,7 +308,7 @@ class Test_BU_Section_Editing_Caps extends WP_UnitTestCase {
 	function addGroup( $name, $user_ids = array(), $perms = array() ) {
 		$args = array();
 
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Secdor\Edit_Groups::get_instance();
 		$args['perms'] = $perms;
 		$args['name'] = $name;
 		$args['users'] = $user_ids;
@@ -340,7 +340,7 @@ class Test_BU_Section_Editing_Caps extends WP_UnitTestCase {
 	}
 
 	function deleteGroup( $id ) {
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Secdor\Edit_Groups::get_instance();
 		$groups->delete_group( $id );
 		if ( isset( $this->groups[ $id ] ) ) {
 			unset( $this->groups[ $id ] );

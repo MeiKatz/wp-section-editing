@@ -1,4 +1,6 @@
 <?php
+namespace Secdor;
+
 /**
  * Permissions editor for hierarchical post types
  *
@@ -8,7 +10,7 @@
  *
  * @uses (depends on) BU Navigation library
  */
-class BU_Hierarchical_Permissions_Editor extends BU_Permissions_Editor {
+class Hierarchical_Permissions_Editor extends Permissions_Editor {
 
   private $child_of = 0;
 
@@ -251,7 +253,7 @@ class BU_Hierarchical_Permissions_Editor extends BU_Permissions_Editor {
       $group_meta = $wpdb->get_results(
         $wpdb->prepare(
           "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id IN ({$ids}) AND meta_value = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-          BU_Group_Permissions::META_KEY,
+          Group_Permissions::META_KEY,
           $this->group->id
         ),
         OBJECT_K

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Integration tests for BU_Edit_Groups controller class
+ * Integration tests for Secdor\Edit_Groups controller class
  *
  * @todo investigate using mock objects here
  *
  * @group bu
  * @group bu-section-editing
  **/
-class Test_BU_Edit_Groups extends WP_UnitTestCase {
+class Test_Secdor_Edit_Groups extends WP_UnitTestCase {
 
 
 	function setUp() {
@@ -22,11 +22,11 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 
 		unregister_post_type( 'custom' );
 
-		// While the DB will rollback, the BU_Edit_Groups persists in memory
+		// While the DB will rollback, the Secdor\Edit_Groups persists in memory
 		// and there for the groups remain cached in its internal array
 		// The delete_groups() method clears them, placed here so that it
 		// happens automatically after each test case is run
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 		$gc->delete_groups();
 	}
 
@@ -35,10 +35,10 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 	 */
 	function test_get_instance() {
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 
 		$this->assertTrue( is_object( $gc ) );
-		$this->assertTrue( $gc instanceof BU_Edit_Groups );
+		$this->assertTrue( $gc instanceof Secdor\Edit_Groups );
 
 	}
 
@@ -49,7 +49,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 
 		$data = $this->_generate_group_data();
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 		$groups_before = $gc->get_groups();
 
 		// Add
@@ -62,7 +62,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$this->assertContains( $group, $gc->get_groups() );
 
 		// Group assertions
-		$this->assertInstanceOf( 'BU_Edit_Group', $group );
+		$this->assertInstanceOf( 'Secdor\\Edit_Group', $group );
 		$this->assertGreaterThan( 0, $group->id );
 
 		// Properties
@@ -76,8 +76,8 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$this->assertNotNull( $group->modified );
 
 		// Permissions
-		$allowed_posts = BU_Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowed_pages = BU_Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowed_posts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
+		$allowed_pages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
 
 		$expected_allowed_posts = array_keys( $data['perms']['post'] );
 		$expected_allowed_pages = array_keys( $data['perms']['page'] );
@@ -100,11 +100,11 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		// Give it a second so that modified time stamp is different
 		sleep( 1 );
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 		$group = $gc->update_group( $original->id, $updates );
 
 		// Group assertions
-		$this->assertInstanceOf( 'BU_Edit_Group', $group );
+		$this->assertInstanceOf( 'Secdor\\Edit_Group', $group );
 		$this->assertSame( $original->id, $group->id );
 
 		// Properties
@@ -118,8 +118,8 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$this->assertNotEquals( $original->modified, $group->modified );
 
 		// Permissions
-		$allowed_posts = BU_Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowed_pages = BU_Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowed_posts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
+		$allowed_pages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
 
 		$expected_allowed_posts = array_keys( $updates['perms']['post'] );
 		$expected_allowed_pages = array_keys( $updates['perms']['page'] );
@@ -135,7 +135,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 	 */
 	function test_load_group() {
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\\Edit_Groups::get_instance();
 
 		$this->assertEmpty( $gc->get_groups() );
 
@@ -162,9 +162,9 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 
 		// Create group object
 		$data = $this->_generate_group_data();
-		$group = new BU_Edit_Group( $data );
+		$group = new Secdor\Edit_Group( $data );
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 		$this->assertEmpty( $gc->get_groups() );
 
 		// Add to groups array
@@ -199,7 +199,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$groups = $this->factory->group->create_many( 2 );
 
 		// Fetch using group controller
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 		$groups_before = $gc->get_groups();
 
 		// Confirm initial state
@@ -238,7 +238,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$groups_user_in = $this->factory->group->create_many( 3, array( 'users' => array( $user ) ) );
 		$groups_user_not_in = $this->factory->group->create_many( 3 );
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 
 		$found_groups = $gc->find_groups_for_user( $user );
 
@@ -262,7 +262,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 		$user_not_in = $this->factory->user->create();
 		$group = $this->factory->group->create( array( 'users' => array( $user_in ) ) );
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 
 		$this->assertTrue( $gc->has_user( array( $group->id ), $user_in ) );
 		$this->assertFalse( $gc->has_user( array( $group->id ), $user_not_in ) );
@@ -298,7 +298,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 
 		$g2 = $this->factory->group->create( array( 'perms' => $g2_perms, 'users' => array( $u2 ) ) );
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 
 		// Generate counts with all possible combinations of args
 		// User one
@@ -392,7 +392,7 @@ class Test_BU_Edit_Groups extends WP_UnitTestCase {
 	{
 		$data = $this->_generate_group_data();
 
-		$gc = BU_Edit_Groups::get_instance();
+		$gc = Secdor\Edit_Groups::get_instance();
 
 		$group = $gc->add_group( $data );
 

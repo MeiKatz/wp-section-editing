@@ -35,14 +35,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 spl_autoload_register(function ($class_name) {
-  if ( substr( $class_name, 0, 3 ) !== "BU_" ) {
+  if ( substr( $class_name, 0, 7 ) !== "Secdor\\" ) {
     return;
   }
+
+  list( $_namespace, $class_name ) = explode( "\\", $class_name, 2 );
 
   $class_name = str_replace(
     "_",
     "-",
-    substr( $class_name, 3 )
+    $class_name
   );
 
   $class_name = strtolower( $class_name );
@@ -77,4 +79,4 @@ define( 'BUSE_TEXTDOMAIN', 'bu-section-editing' );
 define( 'BUSE_NAV_INSTALL_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );
 define( 'BUSE_NAV_UPGRADE_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );
 
-BU_Section_Editing_Plugin::register_hooks();
+Secdor\Section_Editing_Plugin::register_hooks();

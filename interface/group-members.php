@@ -21,7 +21,7 @@
 	</div>
 	<div class="buse-widget-body">
 		<ul id="group-member-list">
-			<?php $users = BU_Section_Editing_Plugin::get_allowed_users(); ?>
+			<?php $users = Secdor\Section_Editing_Plugin::get_allowed_users(); ?>
 			<?php foreach ( $users as $user ) :  ?>
 			<?php $checked = $group->has_user( $user->ID ) ? 'checked="checked"' : ''; ?>
 			<li class="member<?php if ( $group->has_user( $user->ID ) ) :  ?> active<?php endif; ?>" >

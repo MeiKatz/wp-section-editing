@@ -1,14 +1,20 @@
 <?php
+namespace Secdor;
+
 /**
  * Permissions editor for flat post types
  */
-class BU_Flat_Permissions_Editor extends BU_Permissions_Editor {
+class Flat_Permissions_Editor extends Permissions_Editor {
 
   protected function load() {
 
     // Load user setting for posts per page on the manage groups screen
     $user = get_current_user_id();
-    $per_page = get_user_meta( $user, BU_Groups_Admin::POSTS_PER_PAGE_OPTION, true );
+    $per_page = get_user_meta(
+      $user,
+      Groups_Admin::POSTS_PER_PAGE_OPTION,
+      true
+    );
 
     if ( empty( $per_page ) || $per_page < 1 ) {
       // get the default value if none is set
@@ -168,7 +174,7 @@ class BU_Flat_Permissions_Editor extends BU_Permissions_Editor {
    */
   public function format_post( $post, $has_children = false ) {
 
-    $editable = BU_Group_Permissions::group_can_edit( $this->group->id, $post->ID, 'ignore_global' );
+    $editable = Group_Permissions::group_can_edit( $this->group->id, $post->ID, 'ignore_global' );
     $perm = $editable ? 'allowed' : 'denied';
 
     $post->post_title = empty( $post->post_title ) ? __( '(no title)', BUSE_TEXTDOMAIN ) : $post->post_title;

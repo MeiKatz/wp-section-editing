@@ -1,8 +1,13 @@
 <?php
+namespace Secdor;
+
+use \WP_User_Query;
+use \WP_User;
+
 /**
  * Plugin entry point
  */
-class BU_Section_Editing_Plugin {
+class Section_Editing_Plugin {
 
   public static $caps;
   public static $upgrader;
@@ -28,7 +33,7 @@ class BU_Section_Editing_Plugin {
     add_action( 'load-plugins.php', array( __CLASS__, 'repopulate_roles' ) );
     add_action( 'load-themes.php', array( __CLASS__, 'repopulate_roles' ) );
 
-    BU_Edit_Groups::register_hooks();
+    Edit_Groups::register_hooks();
 
   }
 
@@ -40,7 +45,7 @@ class BU_Section_Editing_Plugin {
 
   public static function init() {
 
-    self::$caps = new BU_Section_Capabilities();
+    self::$caps = new Section_Capabilities();
 
     // Roles and capabilities
     add_filter( 'map_meta_cap', array( self::$caps, 'map_meta_cap' ), 10, 4 );
@@ -54,14 +59,14 @@ class BU_Section_Editing_Plugin {
         )
       );
 
-      BU_Groups_Admin::register_hooks();
-      BU_Groups_Admin_Ajax::register_hooks();
+      Groups_Admin::register_hooks();
+      Groups_Admin_Ajax::register_hooks();
 
       add_action( 'load-plugins.php', array( __CLASS__, 'load_plugins_screen' ) );
       add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_settings_link' ), 10, 2 );
 
       // Load support code for the BU Navigation plugin if it's active
-      if ( class_exists( 'BU_Navigation_Plugin' ) ) {
+      if ( class_exists( '\\BU_Navigation_Plugin' ) ) {
         require_once( BUSE_PLUGIN_BASE . '/plugin-support/bu-navigation/section-editor-nav.php' );
       }
     }
@@ -75,13 +80,13 @@ class BU_Section_Editing_Plugin {
 
     $msg = '';
 
-    if ( ! class_exists( 'BU_Navigation_Plugin' ) ) {
+    if ( ! class_exists( '\\BU_Navigation_Plugin' ) ) {
       $install_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_INSTALL_LINK, __( 'BU Navigation plugin', BUSE_TEXTDOMAIN ) );
       $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', BUSE_TEXTDOMAIN ) . '</p>';
       $msg .= '<p>' . sprintf(
         __( 'Please install and activate the %s in order to set permissions for hierarchical post types.', BUSE_TEXTDOMAIN ),
       $install_link ) . '</p>';
-    } else if ( version_compare( BU_Navigation_Plugin::VERSION, '1.1', '<' ) ) {
+    } else if ( version_compare( \BU_Navigation_Plugin::VERSION, '1.1', '<' ) ) {
       $upgrade_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_UPGRADE_LINK, __( 'upgrade your copy of BU Navigation', BUSE_TEXTDOMAIN ) );
       $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', BUSE_TEXTDOMAIN ) . '</p>';
       $msg .= '<p>' .  __( 'This version of BU Section Editing requires at least version 1.1 of BU Navigation.', BUSE_TEXTDOMAIN ) . '</p>';
@@ -136,7 +141,7 @@ class BU_Section_Editing_Plugin {
       return $links;
     }
 
-    $groups_url = admin_url( BU_Groups_Admin::MANAGE_GROUPS_PAGE );
+    $groups_url = admin_url( Groups_Admin::MANAGE_GROUPS_PAGE );
     array_unshift( $links, "<a href=\"$groups_url\" title=\"Manage Section Editing Groups\" class=\"edit\">" . __( 'Manage Groups', BUSE_TEXTDOMAIN ) . '</a>' );
 
     return $links;
@@ -156,7 +161,7 @@ class BU_Section_Editing_Plugin {
 
     // Check if plugin has been updated (or just installed) and store current version
     if ( version_compare( $version, self::BUSE_VERSION, '<' ) ) {
-      self::$upgrader = new BU_Section_Editing_Upgrader();
+      self::$upgrader = new Section_Editing_Upgrader();
       self::$upgrader->upgrade( $version );
 
       // Store new version
@@ -176,7 +181,7 @@ class BU_Section_Editing_Plugin {
 
     // Look for any query params that signify updates
     if ( array_key_exists( 'activated', $_GET ) || array_key_exists( 'activate', $_GET ) || array_key_exists( 'activate-multi', $_GET ) ) {
-      self::$upgrader = new BU_Section_Editing_Upgrader();
+      self::$upgrader = new Section_Editing_Upgrader();
       self::$upgrader->populate_roles();
 
     }

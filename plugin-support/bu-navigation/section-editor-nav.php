@@ -1,7 +1,7 @@
 <?php
 
 // Only add filters for section editors
-if ( BU_Section_Editing_Plugin::is_allowed_user( get_current_user_id() ) ) {
+if ( Secdor\Section_Editing_Plugin::is_allowed_user( get_current_user_id() ) ) {
 
 	add_action( 'bu_nav_tree_enqeueue_scripts', 'buse_bu_navigation_scripts' );
 	add_filter( 'bu_nav_tree_script_context', 'buse_bu_navigation_script_context' );
@@ -21,11 +21,11 @@ function buse_bu_navigation_scripts() {
 	$screen = get_current_screen();
 	$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-	wp_enqueue_script( 'section-editor-nav', plugins_url( 'js/section-editor-nav' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
+	wp_enqueue_script( 'section-editor-nav', plugins_url( 'js/section-editor-nav' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation' ), Secdor\Section_Editing_Plugin::BUSE_VERSION, true );
 
 	if ( function_exists( 'bu_navigation_supported_post_types' ) ) {
 		if ( 'post' == $screen->base && in_array( $screen->post_type, bu_navigation_supported_post_types() ) ) {
-			wp_enqueue_script( 'section-editor-nav-metabox', plugins_url( 'js/section-editor-nav-metabox' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation-metabox' ), BU_Section_Editing_Plugin::BUSE_VERSION, true );
+			wp_enqueue_script( 'section-editor-nav-metabox', plugins_url( 'js/section-editor-nav-metabox' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'bu-navigation-metabox' ), Secdor\Section_Editing_Plugin::BUSE_VERSION, true );
 		}
 	}
 }
@@ -46,7 +46,7 @@ function buse_bu_navigation_filter_posts( $posts ) {
 	global $wpdb;
 
 	$current_user = get_current_user_id();
-	$groups = BU_Edit_Groups::get_instance();
+	$groups = Secdor\Edit_Groups::get_instance();
 	$section_groups = $groups->find_groups_for_user( $current_user, 'ids' );
 
 	if ( ( is_array( $posts ) ) && ( count( $posts ) > 0 ) ) {
@@ -66,7 +66,7 @@ function buse_bu_navigation_filter_posts( $posts ) {
 			$group_meta = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id IN ({$ids}) AND meta_value IN ({$section_groups_values})", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					BU_Group_Permissions::META_KEY
+					Secdor\Group_Permissions::META_KEY
 				)
 				, OBJECT_K
 			); // get results as objects in an array keyed on post_id

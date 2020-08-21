@@ -1,16 +1,18 @@
 <?php
+namespace Secdor;
+
 /**
  * Class for listing groups (designed to be extended)
  *
  * @todo rework to use standard array traversal function and allow for keyed arrays
  */
-class BU_Groups_List {
+class Groups_List {
 
   public $current_group;
   public $edit_groups;
 
   function __construct() {
-    $this->edit_groups = BU_Edit_Groups::get_instance();
+    $this->edit_groups = Edit_Groups::get_instance();
     $this->current_group = -1;
   }
 

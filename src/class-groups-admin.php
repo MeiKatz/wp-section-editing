@@ -1,11 +1,12 @@
 <?php
+namespace Secdor;
 
 /*
 @todo
 - Need to add an edit lock to editing groups (look at navman)
 */
 
-class BU_Groups_Admin {
+class Groups_Admin {
 
 	const MANAGE_GROUPS_SLUG = 'buse_edit_groups';
 	const MANAGE_GROUPS_PAGE = 'admin.php?page=buse_edit_groups';
@@ -72,7 +73,7 @@ class BU_Groups_Admin {
 		if ( $column == self::MANAGE_USERS_COLUMN ) {
 
 			// Find groups for the current user row
-			$gc = BU_Edit_Groups::get_instance();
+			$gc = Edit_Groups::get_instance();
 			$groups = $gc->find_groups_for_user( $user_id );
 
 			if ( empty( $groups ) ) {
@@ -152,17 +153,17 @@ class BU_Groups_Admin {
 			// Copy post permissions from parent on publish
 			if ( $parent && $parent->post_status == 'publish' ) {
 
-				$group_controller = BU_Edit_Groups::get_instance();
+				$group_controller = Edit_Groups::get_instance();
 				$groups = $group_controller->get_groups();
 
-				$existing_groups = get_post_meta( $post->ID, BU_Group_Permissions::META_KEY );
-				$parent_groups = get_post_meta( $parent->ID, BU_Group_Permissions::META_KEY );
+				$existing_groups = get_post_meta( $post->ID, Group_Permissions::META_KEY );
+				$parent_groups = get_post_meta( $parent->ID, Group_Permissions::META_KEY );
 
 				foreach ( $groups as $group ) {
 
 					// Add newly valid groups
 					if ( in_array( $group->id, $parent_groups ) && ! in_array( $group->id, $existing_groups ) ) {
-						add_post_meta( $post->ID, BU_Group_Permissions::META_KEY, $group->id );
+						add_post_meta( $post->ID, Group_Permissions::META_KEY, $group->id );
 					}
 				}
 			}
@@ -171,15 +172,15 @@ class BU_Groups_Admin {
 		// From publish -> draft|pending|etc
 		if ( $old_status == 'publish' && ! in_array( $new_status, $status_blacklist ) ) {
 
-			$group_controller = BU_Edit_Groups::get_instance();
+			$group_controller = Edit_Groups::get_instance();
 			$groups = $group_controller->get_groups();
 
-			$existing_groups = get_post_meta( $post->ID, BU_Group_Permissions::META_KEY );
+			$existing_groups = get_post_meta( $post->ID, Group_Permissions::META_KEY );
 
 			foreach ( $groups as $group ) {
 
 				// Remove all group permissions for non-published posts
-				delete_post_meta( $post->ID, BU_Group_Permissions::META_KEY, $group->id );
+				delete_post_meta( $post->ID, Group_Permissions::META_KEY, $group->id );
 
 			}
 		}
@@ -198,7 +199,7 @@ class BU_Groups_Admin {
 		if ( ! is_null( $role ) && ! $role->has_cap( 'edit_in_section' ) ) {
 
 			// Remove members from any groups
-			$manager = BU_Edit_Groups::get_instance();
+			$manager = Edit_Groups::get_instance();
 
 			$groups = $manager->find_groups_for_user( $user_id );
 			foreach ( $groups as $group ) {
@@ -222,7 +223,7 @@ class BU_Groups_Admin {
 	 */
 	public static function add_edit_views() {
 
-		if ( BU_Section_Editing_Plugin::is_allowed_user() ) {
+		if ( Section_Editing_Plugin::is_allowed_user() ) {
 
 			// Most of these options don't do anything at this time, but we should keep an eye
 			// on the ticket mentioned above as this could change in future releases
@@ -239,9 +240,9 @@ class BU_Groups_Admin {
 			// WP_Query will not recognize custom post status query vars without this
 			register_post_status( self::EDITABLE_POST_STATUS, $args );
 
-			$supported_post_types = BU_Group_Permissions::get_supported_post_types( 'names' );
+			$supported_post_types = Group_Permissions::get_supported_post_types( 'names' );
 
-			$gc = BU_Edit_Groups::get_instance();
+			$gc = Edit_Groups::get_instance();
 			$user = wp_get_current_user();
 			$groups = $gc->find_groups_for_user( $user->ID );
 
@@ -269,7 +270,7 @@ class BU_Groups_Admin {
 	public static function add_editable_view( $views ) {
 		global $post_type_object;
 
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Edit_Groups::get_instance();
 		$post_type = $post_type_object->name;
 		$user_id = get_current_user_id();
 
@@ -307,7 +308,7 @@ class BU_Groups_Admin {
 				return;
 			}
 
-			$groups = BU_Edit_Groups::get_instance();
+			$groups = Edit_Groups::get_instance();
 			$section_groups = $groups->find_groups_for_user( $user_id );
 
 			if ( empty( $section_groups ) ) {
@@ -321,7 +322,7 @@ class BU_Groups_Admin {
 
 			foreach ( $section_groups as $group ) {
 				$meta_query[] = array(
-					'key' => BU_Group_Permissions::META_KEY,
+					'key' => Group_Permissions::META_KEY,
 					'value' => $group->id,
 						'compare' => '=',
 					);
@@ -374,7 +375,7 @@ class BU_Groups_Admin {
 		}
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$version = BU_Section_Editing_Plugin::BUSE_VERSION;
+		$version = Section_Editing_Plugin::BUSE_VERSION;
 
 		if ( in_array( $hook, self::$manage_groups_hooks ) ) {
 
@@ -397,7 +398,7 @@ class BU_Groups_Admin {
 			// Hierarchical permissions editor script
 			// Hierarchical permission editor depends on the BU Navigation plugin's BU_Navigation_Tree_View class
 			// @todo git rid of hierarchical permissions class, just use BU_Navigation_Tree_View / Query with filters as needed
-			if ( class_exists( 'BU_Navigation_Tree_View' ) ) {
+			if ( class_exists( '\\BU_Navigation_Tree_View' ) ) {
 
 				wp_register_script( 'tree-perm-editor', plugins_url( '/js/tree-perm-editor' . $suffix . '.js', BUSE_PLUGIN_ENTRYPOINT ), array( 'jquery', 'jquery-ui-autocomplete', 'bu-navigation' ), $version, true );
 
@@ -414,7 +415,7 @@ class BU_Groups_Admin {
 				);
 
 				// Let the tree view class handle enqueing
-				$treeview = new BU_Navigation_Tree_View( 'buse_perm_editor', $script_context );
+				$treeview = new \BU_Navigation_Tree_View( 'buse_perm_editor', $script_context );
 				$treeview->enqueue_script( 'tree-perm-editor' );
 
 			}
@@ -496,7 +497,7 @@ class BU_Groups_Admin {
 			__( 'Section Groups', BUSE_TEXTDOMAIN ),
 			'promote_users',
 			self::MANAGE_GROUPS_SLUG,
-			array( 'BU_Groups_Admin', 'manage_groups_screen' ),
+			array( 'Secdor\\Groups_Admin', 'manage_groups_screen' ),
 			$menu_icon,
 			73  // position
 		);
@@ -507,7 +508,7 @@ class BU_Groups_Admin {
 			__( 'All Groups', BUSE_TEXTDOMAIN ),
 			'promote_users',
 			self::MANAGE_GROUPS_SLUG,
-			array( 'BU_Groups_Admin', 'manage_groups_screen' )
+			array( 'Secdor\\Groups_Admin', 'manage_groups_screen' )
 		);
 
 		$groups_edit = add_submenu_page(
@@ -516,7 +517,7 @@ class BU_Groups_Admin {
 			__( 'Add New', BUSE_TEXTDOMAIN ),
 			'promote_users',
 			self::NEW_GROUP_SLUG,
-			array( 'BU_Groups_Admin', 'manage_groups_screen' )
+			array( 'Secdor\\Groups_Admin', 'manage_groups_screen' )
 		);
 
 		// Keep track of hooks
@@ -596,7 +597,7 @@ class BU_Groups_Admin {
 			}
 		}
 
-		$valid_user_count = count( BU_Section_Editing_Plugin::get_allowed_users() );
+		$valid_user_count = count( Section_Editing_Plugin::get_allowed_users() );
 
 		if ( $valid_user_count == 0 ) {
 
@@ -619,7 +620,7 @@ class BU_Groups_Admin {
 	 */
 	static function load_manage_groups() {
 
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Edit_Groups::get_instance();
 		$group_id = isset( $_REQUEST['id'] ) ? $_REQUEST['id'] : -1;
 		$redirect_url = '';
 
@@ -753,12 +754,12 @@ class BU_Groups_Admin {
 		}
 
 		// Truncate name if it exceeds max length
-		if ( strlen( $group_data['name'] ) >= BU_Edit_Group::MAX_NAME_LENGTH ) {
-			$group_data['name'] = substr( $group_data['name'], 0, BU_Edit_Group::MAX_NAME_LENGTH - 1 );
+		if ( strlen( $group_data['name'] ) >= Edit_Group::MAX_NAME_LENGTH ) {
+			$group_data['name'] = substr( $group_data['name'], 0, Edit_Group::MAX_NAME_LENGTH - 1 );
 		}
 
 		// Convert permission JSON strings to PHP arrays
-		$post_types = BU_Group_Permissions::get_supported_post_types( 'names' );
+		$post_types = Group_Permissions::get_supported_post_types( 'names' );
 
 		foreach ( $post_types as $post_type ) {
 
@@ -778,7 +779,7 @@ class BU_Groups_Admin {
 	 */
 	static function manage_groups_screen() {
 
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Edit_Groups::get_instance();
 
 		$page = $_GET['page'] ? $_GET['page'] : self::MANAGE_GROUPS_SLUG;
 
@@ -804,7 +805,7 @@ class BU_Groups_Admin {
 					);
 				} else {
 
-					$group_list = new BU_Groups_List();
+					$group_list = new Groups_List();
 
 					$template_path = sprintf(
 						"%s/%s",
@@ -816,7 +817,7 @@ class BU_Groups_Admin {
 
 			// New group page
 			case self::NEW_GROUP_SLUG:
-				$group = new BU_Edit_Group();
+				$group = new Edit_Group();
 				$page_title = __( 'Add Section Group', BUSE_TEXTDOMAIN );
 
 				$template_path = sprintf(
@@ -896,12 +897,12 @@ class BU_Groups_Admin {
 		if ( ! is_null( $post_type ) && $pto = get_post_type_object( $post_type ) ) {
 			$content_types = array( $pto );
 		} else {
-			$content_types = BU_Group_Permissions::get_supported_post_types();
+			$content_types = Group_Permissions::get_supported_post_types();
 		}
 
 		$output = '';
 		$counts = array();
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Edit_Groups::get_instance();
 
 		if ( is_numeric( $group ) ) {
 			$group = $groups->get( $group );

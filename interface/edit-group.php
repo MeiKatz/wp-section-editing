@@ -1,6 +1,6 @@
 <div id="section-group-editor" class="wrap">
 	<div id="icon-section-group" class="icon32"></div>
-	<h2><?php echo $page_title; ?> <a href="<?php echo esc_attr( BU_Groups_Admin::manage_groups_url( 'add' ) );?>" class="button add-new-h2"><?php _e( 'Add New', BUSE_TEXTDOMAIN ); ?></a></h2>
+	<h2><?php echo $page_title; ?> <a href="<?php echo esc_attr( Secdor\Groups_Admin::manage_groups_url( 'add' ) );?>" class="button add-new-h2"><?php _e( 'Add New', BUSE_TEXTDOMAIN ); ?></a></h2>
 	<div class="form-wrap">
 		<h3 class="nav-tab-wrapper">
 			<a id="nav-tab-properties" href="#group-properties-panel" class="nav-link nav-tab <?php if ( $tab == 'properties' ) { echo 'nav-tab-active'; } ?>" data-target="properties" ><?php _e( 'Properties', BUSE_TEXTDOMAIN ); ?></a>

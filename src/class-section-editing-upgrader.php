@@ -1,6 +1,7 @@
 <?php
+namespace Secdor;
 
-class BU_Section_Editing_Upgrader {
+class Section_Editing_Upgrader {
 
 	/**
 	 * Perform any data modifications as needed based on version diff
@@ -66,7 +67,7 @@ class BU_Section_Editing_Upgrader {
 			$role->add_cap( 'level_0' );
 
 			// Add post type specific section editing capabilities
-			BU_Section_Editing_Plugin::$caps->add_caps( $role );
+			Section_Editing_Plugin::$caps->add_caps( $role );
 
 			// Allow others to customize default section editor caps
 			do_action( 'buse_section_editor_caps', $role );
@@ -91,14 +92,14 @@ class BU_Section_Editing_Upgrader {
 		$posts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s",
-				BU_Group_Permissions::META_KEY
+				Group_Permissions::META_KEY
 			)
 		);
 
 		// Loop through and update
 		foreach ( $posts as $post ) {
 			$result = preg_replace( $patterns, $replacements, $post->meta_value );
-			update_post_meta( $post->post_id, BU_Group_Permissions::META_KEY, $result, $post->meta_value );
+			update_post_meta( $post->post_id, Group_Permissions::META_KEY, $result, $post->meta_value );
 		}
 
 	}
@@ -117,28 +118,28 @@ class BU_Section_Editing_Upgrader {
 		$allowed_posts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value LIKE %s",
-				BU_Group_Permissions::META_KEY,
+				Group_Permissions::META_KEY,
 				'%:allowed'
 			)
 		);
 
 		foreach ( $allowed_posts as $post ) {
 			$new_meta_value = preg_replace( $patterns, $replacements, $post->meta_value );
-			update_post_meta( $post->post_id, BU_Group_Permissions::META_KEY, $new_meta_value, $post->meta_value );
+			update_post_meta( $post->post_id, Group_Permissions::META_KEY, $new_meta_value, $post->meta_value );
 		}
 
 		// Fetch existing values
 		$denied_posts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value LIKE %s",
-				BU_Group_Permissions::META_KEY,
+				Group_Permissions::META_KEY,
 				'%denied'
 			)
 		);
 
 		// Loop through and update
 		foreach ( $denied_posts as $post ) {
-			delete_post_meta( $post->post_id, BU_Group_Permissions::META_KEY, $post->meta_value );
+			delete_post_meta( $post->post_id, Group_Permissions::META_KEY, $post->meta_value );
 		}
 
 		// Role/cap changes in 04b54ea79c1bc935eee5ce04118812c1d8dad229
@@ -172,7 +173,7 @@ class BU_Section_Editing_Upgrader {
 
 		if ( $groups ) {
 
-			$gc = BU_Edit_Groups::get_instance();
+			$gc = Edit_Groups::get_instance();
 
 			foreach ( $groups as $groupdata ) {
 
@@ -187,14 +188,14 @@ class BU_Section_Editing_Upgrader {
 				$posts_to_update = $wpdb->get_col(
 					$wpdb->prepare(
 						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-						BU_Group_Permissions::META_KEY,
+						Group_Permissions::META_KEY,
 						$old_id
 					)
 				);
 
 				// Update one by one
 				foreach ( $posts_to_update as $pid ) {
-					update_post_meta( $pid, BU_Group_Permissions::META_KEY, $group->id, $old_id );
+					update_post_meta( $pid, Group_Permissions::META_KEY, $group->id, $old_id );
 				}
 			}
 
@@ -219,7 +220,7 @@ class BU_Section_Editing_Upgrader {
 			$role->remove_cap( 'edit_published_in_section' );
 			$role->remove_cap( 'publish_in_section' );
 
-			$caps = BU_Section_Editing_Plugin::$caps->get_caps();
+			$caps = Section_Editing_Plugin::$caps->get_caps();
 
 			foreach ( $caps as $cap ) {
 				$role->add_cap( $cap );

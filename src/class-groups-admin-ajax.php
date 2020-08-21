@@ -1,4 +1,7 @@
 <?php
+namespace Secdor;
+
+use \StdClass;
 
 /**
  * Centralized admin ajax routing
@@ -6,7 +9,7 @@
  * @todo sanitize ALL input
  * @todo AJAX nonces
  */
-class BU_Groups_Admin_Ajax {
+class Groups_Admin_Ajax {
 
 	static public function register_hooks() {
 
@@ -46,7 +49,7 @@ class BU_Groups_Admin_Ajax {
 					'nicename' => $user->user_nicename,
 					'display_name' => $user->display_name,
 					'email' => $user->user_email,
-					'is_section_editor' => (bool) BU_Section_Editing_Plugin::is_allowed_user( $user->ID ),
+					'is_section_editor' => (bool) Section_Editing_Plugin::is_allowed_user( $user->ID ),
 				),
 			);
 
@@ -61,7 +64,7 @@ class BU_Groups_Admin_Ajax {
 	/**
 	 * Renders an unordered list of posts for specified post type, optionally starting at a specifc post
 	 *
-	 * @uses BU_Hierarchical_Permissions_Editor or BU_Flat_Permissions_Editor depending on post_type
+	 * @uses Secdor\Hierarchical_Permissions_Editor or Secdor\Flat_Permissions_Editor depending on post_type
 	 *
 	 * @todo add nonce
 	 */
@@ -83,18 +86,18 @@ class BU_Groups_Admin_Ajax {
 
 			if ( $post_type_obj->hierarchical ) {
 
-				$perm_editor = new BU_Hierarchical_Permissions_Editor( $group_id, $post_type_obj->name );
+				$perm_editor = new Hierarchical_Permissions_Editor( $group_id, $post_type_obj->name );
 				$perm_editor->format = 'json';
 
 			} else {
 
-				$perm_editor = new BU_Flat_Permissions_Editor( $group_id, $post_type_obj->name );
+				$perm_editor = new Flat_Permissions_Editor( $group_id, $post_type_obj->name );
 
 			}
 
 			$perm_editor->query( $query_vars );
 
-			$response = new stdClass();
+			$response = new StdClass();
 			$child_of = isset( $query_vars['child_of'] ) ? $query_vars['child_of'] : 0;
 
 			$response->posts = $perm_editor->get_posts( $child_of );
@@ -155,7 +158,7 @@ class BU_Groups_Admin_Ajax {
 			$answer = current_user_can( $post_type_obj->cap->edit_post, $parent_id );
 		}
 
-		$response = new stdClass();
+		$response = new StdClass();
 
 		$response->post_id = $post_id;
 		$response->parent_id = $parent_id;
@@ -186,7 +189,7 @@ class BU_Groups_Admin_Ajax {
 			$answer = current_user_can( $post_type_obj->cap->edit_post, $post_id );
 		}
 
-		$response = new stdClass();
+		$response = new StdClass();
 
 		$response->post_id = $post_id;
 		$response->parent_id = $post->post_parent;

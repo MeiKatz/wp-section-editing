@@ -12,14 +12,14 @@ class WP_UnitTest_Factory_For_Group extends WP_UnitTest_Factory_For_Thing {
 	}
 
 	function create_object( $args ) {
-		return BU_Edit_Groups::get_instance()->add_group( $args );
+		return Secdor\Edit_Groups::get_instance()->add_group( $args );
 	}
 
 	function update_object( $group_id, $fields ) {
-		return BU_Edit_Groups::get_instance()->update_group( $group_id, $fields );
+		return Secdor\Edit_Groups::get_instance()->update_group( $group_id, $fields );
 	}
 
 	function get_object_by_id( $group_id ) {
-		return BU_Edit_Groups::get_instance()->get( $group_id );
+		return Secdor\Edit_Groups::get_instance()->get( $group_id );
 	}
 }

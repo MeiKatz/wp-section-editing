@@ -1,8 +1,10 @@
 <?php
+namespace Secdor;
+
 /**
  * A Section Editing group model
  */
-class BU_Edit_Group {
+class Edit_Group {
 
   private $id = null;
   private $name = null;

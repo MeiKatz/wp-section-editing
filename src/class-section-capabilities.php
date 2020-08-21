@@ -1,6 +1,9 @@
 <?php
+namespace Secdor;
 
-class BU_Section_Capabilities {
+use \WP_User;
+
+class Section_Capabilities {
 
 	/**
 	 * Get all Section Editing caps for the registered post types.
@@ -132,7 +135,7 @@ class BU_Section_Capabilities {
 
 		if ( $post_type->hierarchical != true ) {
 
-			if ( BU_Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 			}
 		} else {
@@ -140,12 +143,12 @@ class BU_Section_Capabilities {
 			if ( $this->is_parent_changing( $post ) ) {
 				$parent_id = $this->get_new_parent( $post );
 
-				if ( $post->post_status == 'publish' && BU_Group_Permissions::can_edit_section( $user, $parent_id ) ) {
+				if ( $post->post_status == 'publish' && Group_Permissions::can_edit_section( $user, $parent_id ) ) {
 					$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 				}
 			}
 
-			if ( $post_id && $post->post_status == 'publish' && BU_Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $post_id && $post->post_status == 'publish' && Group_Permissions::can_edit_section( $user, $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 			}
 		}
@@ -159,11 +162,11 @@ class BU_Section_Capabilities {
 		$post_type = get_post_type_object( $post->post_type );
 
 		if ( $post_type->hierarchical != true ) {
-			if ( BU_Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'delete', $post->post_type ) );
 			}
 		} else {
-			if ( $post_id && in_array( $post->post_status, array( 'publish', 'trash' ) ) && BU_Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $post_id && in_array( $post->post_status, array( 'publish', 'trash' ) ) && Group_Permissions::can_edit_section( $user, $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'delete', $post->post_type ) );
 			}
 		}
@@ -187,12 +190,12 @@ class BU_Section_Capabilities {
 
 		// BU Versions uses the post_parent to relate the alternate version
 		// to the original
-		if ( class_exists( 'BU_Version_Workflow' ) ) {
-			$is_alt = BU_Version_Workflow::$v_factory->is_alt( $post->post_type );
+		if ( class_exists( '\\BU_Version_Workflow' ) ) {
+			$is_alt = \BU_Version_Workflow::$v_factory->is_alt( $post->post_type );
 		}
 
 		if ( $post_type->hierarchical != true && $is_alt != true ) {
-			if ( BU_Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 			}
 		} else {
@@ -202,11 +205,11 @@ class BU_Section_Capabilities {
 				$parent_id = $this->get_new_parent( $post );
 
 				// Can't move published posts under sections they can't edit
-				if ( BU_Group_Permissions::can_edit_section( $user, $parent_id ) ) {
+				if ( Group_Permissions::can_edit_section( $user, $parent_id ) ) {
 					$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 				}
 			} else {
-				if ( isset( $post_id ) && BU_Group_Permissions::can_edit_section( $user, $post->post_parent ) ) {
+				if ( isset( $post_id ) && Group_Permissions::can_edit_section( $user, $post->post_parent ) ) {
 					$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 				}
 			}

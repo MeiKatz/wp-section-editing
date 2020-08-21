@@ -1,8 +1,12 @@
 <?php
+namespace Secdor;
+
+use \WP_Query;
+
 /**
  * Abstract base class for post permissions editor
  */
-abstract class BU_Permissions_Editor {
+abstract class Permissions_Editor {
 
   protected $group;
   protected $post_type;
@@ -16,7 +20,7 @@ abstract class BU_Permissions_Editor {
   public $format = 'html';
 
   /**
-   * $group can be either a BU_Edit_Group object or a group ID
+   * $group can be either a Secdor\Edit_Group object or a group ID
    */
   function __construct( $group, $post_type ) {
 
@@ -24,16 +28,16 @@ abstract class BU_Permissions_Editor {
 
       $group_id = intval( $group );
 
-      $controller = BU_Edit_Groups::get_instance();
+      $controller = Edit_Groups::get_instance();
 
       $this->group = $controller->get( $group_id );
 
       // Could be a new group
       if ( ! $this->group ) {
 
-        $this->group = new BU_Edit_Group();
+        $this->group = new Edit_Group();
       }
-    } else if ( $group instanceof BU_Edit_Group ) {
+    } else if ( $group instanceof Edit_Group ) {
 
       $this->group = $group;
 

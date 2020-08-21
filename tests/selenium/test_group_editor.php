@@ -71,7 +71,7 @@ class BUSE_GroupEditorTests extends WP_SeleniumTestCase {
 		$this->assertNotNull( $group_id );
 
 		// Verify against plugin API
-		$groups = BU_Edit_Groups::get_instance();
+		$groups = Secdor\Edit_Groups::get_instance();
 		$group = $groups->get( $group_id );
 		$this->assertEquals( $group_data['name'], $group->name );
 
@@ -129,7 +129,7 @@ class BUSE_GroupEditorTests extends WP_SeleniumTestCase {
 		// 	creation is cached -- in both the 'option' and 'alloptions' groups.
 
 		// 	When we change things through Selenium and then attempt to load from the DB,
-		// 	we get the cached value (either from memory if we don't reload BU_Edit_Groups,
+		// 	we get the cached value (either from memory if we don't reload Secdor\Edit_Groups,
 		// 	or from the options/alloptions object cache if we do).
 
 		// 	Need to figure out the best way to work around this
@@ -138,7 +138,7 @@ class BUSE_GroupEditorTests extends WP_SeleniumTestCase {
 		// 	Or maybe there is a better solution.
 
 		// Verify against plugin API -- DOES NOT WORK
-		// $groups = BU_Edit_Groups::get_instance();
+		// $groups = Secdor\Edit_Groups::get_instance();
 		// $groups->load();
 		// $group_after = $groups->get( $group->id );
 		// $this->assertContains( $user_id, $group->users );

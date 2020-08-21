@@ -1,5 +1,10 @@
 <?php
-class BU_Group_Permissions {
+namespace Secdor;
+
+use \WP_User;
+use \WP_Query;
+
+class Group_Permissions {
 
 	const META_KEY = '_bu_section_group';
 
@@ -32,7 +37,7 @@ class BU_Group_Permissions {
 	}
 
 	/**
-	 * Relocated from BU_Section_Capabilities in classes.capabilities.php
+	 * Relocated from Secdor\Section_Capabilities in classes.capabilities.php
 	 */
 	public static function can_edit_section( WP_User $user, $post_id ) {
 
@@ -46,7 +51,7 @@ class BU_Group_Permissions {
 		}
 
 		// Get all groups for this user
-		$edit_groups_o = BU_Edit_Groups::get_instance();
+		$edit_groups_o = Edit_Groups::get_instance();
 		$groups = $edit_groups_o->find_groups_for_user( $user_id );
 
 		if ( empty( $groups ) ) {
@@ -175,7 +180,7 @@ class BU_Group_Permissions {
 	public static function group_can_edit( $group_id, $post_id, $ignore = '' ) {
 
 		if ( 'ignore_global' !== $ignore ) {
-			$groups = BU_Edit_Groups::get_instance();
+			$groups = Edit_Groups::get_instance();
 
 			if ( $groups->post_is_globally_editable_by_group( $post_id, $group_id ) ) {
 				return true;
