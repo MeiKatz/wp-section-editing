@@ -1,10 +1,11 @@
 # Copyright (C) 2015 BU Section Editing
+# Copyright (C) 2020 Gregor Mitzka
 # This file is distributed under the same license as the BU Section Editing package.
 msgid ""
 msgstr ""
-"Project-Id-Version: BU Section Editing 0.9.8\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/bu-section-"
-"editing\n"
+"Project-Id-Version: Secdor Section Editing 0.9.8\n"
+"Report-Msgid-Bugs-To: https://github.com/MeiKatz/secdor-section-"
+"editing/issues\n"
 "POT-Creation-Date: 2020-08-21 18:35+0200\n"
 "PO-Revision-Date: 2020-08-21 18:35+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"

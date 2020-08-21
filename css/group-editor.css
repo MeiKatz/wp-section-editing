@@ -463,7 +463,7 @@
     display: inline;
 }
 
-#group-stats-widget .buse-widget-body {
+#group-stats-widget .secdor-widget-body {
 	padding: 0;
 }
 
@@ -543,7 +543,7 @@
 
 /* Widgets */
 
-.buse-widget-header {
+.secdor-widget-header {
 	padding: 7px;
 	border: 1px solid #D3D3D3;
 	-webkit-border-top-left-radius: 3px;
@@ -559,13 +559,13 @@
 	background-image: linear-gradient(top,#ECECEC,#DFDFDF);
 }
 
-.buse-widget-header h4 {
+.secdor-widget-header h4 {
 	margin: 0;
 	color: #464646;
 	font-weight: bold;
 }
 
-.buse-widget-body{
+.secdor-widget-body{
 	background-color: white;
 	margin-bottom: 25px;
 	padding: 10px;
@@ -650,8 +650,8 @@
 
 /* Find user autocomplete */
 
-body.toplevel_page_buse_edit_groups .ui-autocomplete,
-body.section-groups_page_buse_new_group .ui-autocomplete {
+body.toplevel_page_secdor_edit_groups .ui-autocomplete,
+body.section-groups_page_secdor_new_group .ui-autocomplete {
 	padding: 0;
 	margin: 0;
 	list-style: none;
@@ -665,8 +665,8 @@ body.section-groups_page_buse_new_group .ui-autocomplete {
 	border-color: #bbb;
 }
 
-body.toplevel_page_buse_edit_groups .ui-autocomplete .ui-menu-item,
-body.section-groups_page_buse_new_group .ui-autocomplete .ui-menu-item {
+body.toplevel_page_secdor_edit_groups .ui-autocomplete .ui-menu-item,
+body.section-groups_page_secdor_new_group .ui-autocomplete .ui-menu-item {
 	margin-bottom: 0;
 	white-space: nowrap;
 	text-align: left;
@@ -675,20 +675,20 @@ body.section-groups_page_buse_new_group .ui-autocomplete .ui-menu-item {
 }
 
 /* For jQuery UI autocomplete < 1.11.0 */
-body.toplevel_page_buse_edit_groups .ui-autocomplete .ui-menu-item[role="presentation"],
-body.section-groups_page_buse_new_group .ui-autocomplete .ui-menu-item[role="presentation"] {
+body.toplevel_page_secdor_edit_groups .ui-autocomplete .ui-menu-item[role="presentation"],
+body.section-groups_page_secdor_new_group .ui-autocomplete .ui-menu-item[role="presentation"] {
 	padding: 0;
 }
 
-body.toplevel_page_buse_edit_groups .ui-autocomplete .ui-menu-item[role="presentation"] a,
-body.section-groups_page_buse_new_group .ui-autocomplete .ui-menu-item[role="presentation"] a {
+body.toplevel_page_secdor_edit_groups .ui-autocomplete .ui-menu-item[role="presentation"] a,
+body.section-groups_page_secdor_new_group .ui-autocomplete .ui-menu-item[role="presentation"] a {
 	padding: 4px 10px;
 }
 
-body.toplevel_page_buse_edit_groups .ui-autocomplete .ui-state-hover,
-body.section-groups_page_buse_new_group .ui-autocomplete .ui-state-hover,
-body.toplevel_page_buse_edit_groups .ui-autocomplete .ui-state-focus,
-body.section-groups_page_buse_new_group .ui-autocomplete .ui-state-focus {
+body.toplevel_page_secdor_edit_groups .ui-autocomplete .ui-state-hover,
+body.section-groups_page_secdor_new_group .ui-autocomplete .ui-state-hover,
+body.toplevel_page_secdor_edit_groups .ui-autocomplete .ui-state-focus,
+body.section-groups_page_secdor_new_group .ui-autocomplete .ui-state-focus {
 	cursor: pointer;
 	background-color: #ddd;
 }

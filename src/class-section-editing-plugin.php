@@ -12,14 +12,14 @@ class Section_Editing_Plugin {
   public static $caps;
   public static $upgrader;
 
-  const BUSE_VERSION = '0.9.9';
-  const BUSE_VERSION_OPTION = '_buse_version';
+  const VERSION = '0.9.9';
+  const VERSION_OPTION = '_buse_version';
 
   public static function register_hooks() {
     $file_name = realpath(
       sprintf(
-        "%s/bu-section-editing.php",
-        BUSE_PLUGIN_BASE
+        "%s/secdor-section-editing.php",
+        SECDOR_PLUGIN_BASE
       )
     );
 
@@ -38,9 +38,11 @@ class Section_Editing_Plugin {
   }
 
   public static function l10n() {
-
-    load_plugin_textdomain( BUSE_TEXTDOMAIN, false, BUSE_PLUGIN_PATH . '/languages/' );
-
+    load_plugin_textdomain(
+      SECDOR_TEXTDOMAIN,
+      false,
+      SECDOR_PLUGIN_PATH . '/languages/'
+    );
   }
 
   public static function init() {
@@ -55,7 +57,7 @@ class Section_Editing_Plugin {
       $dirname = realpath(
         sprintf(
           "%s/src",
-          BUSE_PLUGIN_BASE
+          SECDOR_PLUGIN_BASE
         )
       );
 
@@ -67,7 +69,7 @@ class Section_Editing_Plugin {
 
       // Load support code for the BU Navigation plugin if it's active
       if ( class_exists( '\\BU_Navigation_Plugin' ) ) {
-        require_once( BUSE_PLUGIN_BASE . '/plugin-support/bu-navigation/section-editor-nav.php' );
+        require_once( SECDOR_PLUGIN_BASE . '/plugin-support/bu-navigation/section-editor-nav.php' );
       }
     }
 
@@ -81,17 +83,17 @@ class Section_Editing_Plugin {
     $msg = '';
 
     if ( ! class_exists( '\\BU_Navigation_Plugin' ) ) {
-      $install_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_INSTALL_LINK, __( 'BU Navigation plugin', BUSE_TEXTDOMAIN ) );
-      $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', BUSE_TEXTDOMAIN ) . '</p>';
+      $install_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_INSTALL_LINK, __( 'BU Navigation plugin', SECDOR_TEXTDOMAIN ) );
+      $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', SECDOR_TEXTDOMAIN ) . '</p>';
       $msg .= '<p>' . sprintf(
-        __( 'Please install and activate the %s in order to set permissions for hierarchical post types.', BUSE_TEXTDOMAIN ),
+        __( 'Please install and activate the %s in order to set permissions for hierarchical post types.', SECDOR_TEXTDOMAIN ),
       $install_link ) . '</p>';
     } else if ( version_compare( \BU_Navigation_Plugin::VERSION, '1.1', '<' ) ) {
-      $upgrade_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_UPGRADE_LINK, __( 'upgrade your copy of BU Navigation', BUSE_TEXTDOMAIN ) );
-      $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', BUSE_TEXTDOMAIN ) . '</p>';
-      $msg .= '<p>' .  __( 'This version of BU Section Editing requires at least version 1.1 of BU Navigation.', BUSE_TEXTDOMAIN ) . '</p>';
+      $upgrade_link = sprintf( '<a href="%s">%s</a>', BUSE_NAV_UPGRADE_LINK, __( 'upgrade your copy of BU Navigation', SECDOR_TEXTDOMAIN ) );
+      $msg = '<p>' . __( 'The BU Section Editing plugin relies on the BU Navigation plugin for displaying hierarchical permission editors.', SECDOR_TEXTDOMAIN ) . '</p>';
+      $msg .= '<p>' .  __( 'This version of BU Section Editing requires at least version 1.1 of BU Navigation.', SECDOR_TEXTDOMAIN ) . '</p>';
       $msg .= '<p>' . sprintf(
-        __( 'Please %s to enable permissions for hierarchical post types.', BUSE_TEXTDOMAIN ),
+        __( 'Please %s to enable permissions for hierarchical post types.', SECDOR_TEXTDOMAIN ),
       $upgrade_link ) . '</p>';
     }
 
@@ -137,12 +139,12 @@ class Section_Editing_Plugin {
   }
 
   public static function plugin_settings_link( $links, $file ) {
-    if ( $file != plugin_basename( BUSE_PLUGIN_BASE ) ) {
+    if ( $file != plugin_basename( SECDOR_PLUGIN_BASE ) ) {
       return $links;
     }
 
     $groups_url = admin_url( Groups_Admin::MANAGE_GROUPS_PAGE );
-    array_unshift( $links, "<a href=\"$groups_url\" title=\"Manage Section Editing Groups\" class=\"edit\">" . __( 'Manage Groups', BUSE_TEXTDOMAIN ) . '</a>' );
+    array_unshift( $links, "<a href=\"$groups_url\" title=\"Manage Section Editing Groups\" class=\"edit\">" . __( 'Manage Groups', SECDOR_TEXTDOMAIN ) . '</a>' );
 
     return $links;
   }
@@ -153,20 +155,22 @@ class Section_Editing_Plugin {
    */
   public static function version_check() {
 
-    $version = get_option( self::BUSE_VERSION_OPTION );
+    $version = get_option( self::VERSION_OPTION );
 
     if ( empty( $version ) ) {
       $version = '0';
     }
 
     // Check if plugin has been updated (or just installed) and store current version
-    if ( version_compare( $version, self::BUSE_VERSION, '<' ) ) {
+    if ( version_compare( $version, self::VERSION, '<' ) ) {
       self::$upgrader = new Section_Editing_Upgrader();
       self::$upgrader->upgrade( $version );
 
       // Store new version
-      update_option( self::BUSE_VERSION_OPTION, self::BUSE_VERSION );
-
+      update_option(
+        self::VERSION_OPTION,
+        self::VERSION
+      );
     }
 
   }

@@ -1,17 +1,18 @@
 <?php
 /*
-Plugin Name: BU Section Editing
-Plugin URI: http://developer.bu.edu/bu-section-editing/
-Author: Boston University (IS&T)
-Author URI: http://sites.bu.edu/web/
+Plugin Name: Secdor Section Editing
+Plugin URI: https://github.com/MeiKatz/secdor-section-editing/
+Author: Gregor Mitzka
+Author URI: https://github.com/MeiKatz/
 Description: Enhances WordPress content editing workflow by providing section editing groups and permissions
 Version: 0.10.0
-Text Domain: bu-section-editing
+Text Domain: secdor-section-editing
 Domain Path: /languages
 */
 
 /**
 Copyright 2012 by Boston University
+Copyright 2020 by Gregor Mitzka
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 
 /*
+@author Gregor Mitzka <gregor.mitzka@gmail.com>
 @author Gregory Cornelius <gcorne@gmail.com>
 @author Mike Burns <mgburns@bu.edu>
 @author Andrew Bauer <awbauer@bu.edu>
@@ -70,11 +72,11 @@ if ( function_exists( "__autoload" ) ) {
   }
 }
 
-define( "BUSE_PLUGIN_BASE", realpath( __DIR__ ) );
-define( "BUSE_PLUGIN_ENTRYPOINT", realpath( __FILE__ ) );
+define( "SECDOR_PLUGIN_BASE", realpath( __DIR__ ) );
+define( "SECDOR_PLUGIN_ENTRYPOINT", realpath( __FILE__ ) );
 
-define( 'BUSE_PLUGIN_PATH', basename( dirname( __FILE__ ) ) );
-define( 'BUSE_TEXTDOMAIN', 'bu-section-editing' );
+define( 'SECDOR_PLUGIN_PATH', basename( dirname( __FILE__ ) ) );
+define( 'SECDOR_TEXTDOMAIN', 'secdor-section-editing' );
 
 define( 'BUSE_NAV_INSTALL_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );
 define( 'BUSE_NAV_UPGRADE_LINK', 'http://wordpress.org/extend/plugins/bu-navigation/' );

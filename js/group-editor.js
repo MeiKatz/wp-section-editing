@@ -133,7 +133,7 @@ jQuery(document).ready(function($){
 	 */
 	var _translate_input_to_user = function( input ) {
 
-		var results = $.grep( buse_site_users, function( el, i ) {
+		var results = $.grep( secdor_site_users, function( el, i ) {
 
 			var match = input.toLowerCase();
 
@@ -162,11 +162,11 @@ jQuery(document).ready(function($){
 	 * Modeled after user input on wp-admin/user-new.php post-WP 3.3
 	 * @uses jquery-ui-autocomplete
 	 */
-	var add_member_input = $( '.buse-suggest-user' ).autocomplete({
+	var add_member_input = $( '.secdor-suggest-user' ).autocomplete({
 		source: function( request, response) {
 
 			// Filter section editors based on term
-			var filtered = _match_section_editors_with_term( buse_site_users, request.term );
+			var filtered = _match_section_editors_with_term( secdor_site_users, request.term );
 			var filtered = _remove_existing_members( filtered );
 			var results = $.map( filtered, function(o) { return o.autocomplete; });
 
@@ -748,7 +748,7 @@ jQuery(document).ready(function($){
 	var displayPosts = function( $editor, query ) {
 
 		var editorData = {
-			action : 'buse_render_post_list',
+			action : 'secdor_render_post_list',
 			group_id : $('#group_id').val() || -1,
 			query : {}
 		}
@@ -1196,7 +1196,7 @@ jQuery(document).ready(function($){
 		// Commit pending edits for each permissions editor to input value
 		$('.perm-editor').each(function (){
 			var edits = $(this).data('perm-edits') || {'allowed': [], 'denied': []};
-			$(this).siblings('.buse-edits').val( JSON.stringify(edits) );
+			$(this).siblings('.secdor-edits').val( JSON.stringify(edits) );
 		});
 
 	});

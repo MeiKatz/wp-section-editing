@@ -8,7 +8,7 @@ jQuery(function($) {
 		}
 
 		var data = {
-			action: 'buse_can_edit',
+			action: 'secdor_can_edit',
 			post_id: parent_id
 		}
 
@@ -41,7 +41,7 @@ jQuery(function($) {
 		}
 
 		var data = {
-			action: 'buse_can_move',
+			action: 'secdor_can_move',
 			post_id: post_id,
 			parent_id: parent_id
 		}
@@ -72,7 +72,7 @@ jQuery(function($) {
 		}
 
 		var data = {
-			action: 'buse_can_edit',
+			action: 'secdor_can_edit',
 			post_id: post_id
 		}
 

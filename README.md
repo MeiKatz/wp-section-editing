@@ -1,18 +1,18 @@
-# BU Section Editing #
-**Contributors:** mgburns, gcorne, awbauer, inderpreet99, anton-kachurin  
-**Tags:** permissions, section, access, acl, user management, custom roles, content editing, workflow, boston university, bu  
-**Requires at least:** 3.1  
-**Tested up to:** 4.5.3  
-**Stable tag:** 0.10.0  
-**License:** GPLv2 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
+# Secdor Section Editing #
+**Contributors:** MeiKatz, mgburns, gcorne, awbauer, inderpreet99, anton-kachurin
+**Tags:** permissions, section, access, acl, user management, custom roles, content editing, workflow, boston university, bu
+**Requires at least:** 3.1
+**Tested up to:** 4.5.3
+**Stable tag:** 0.10.0
+**License:** GPLv2 or later
+**License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
 Advanced content editing workflow in WordPress through the use of section editing groups and permissions.
 
 
 ## Description
 
-BU Section Editing provides advanced permissions for managing the editors on your website team. Create “section editing groups” and granularly control who can edit what content. Assign editors the new Section Editor role, and define what the group can edit with an innovative new interface for specifying any of your content – pages, posts, or any custom post types – right down to the single page or single post level.
+Secdor Section Editing provides advanced permissions for managing the editors on your website team. Create “section editing groups” and granularly control who can edit what content. Assign editors the new Section Editor role, and define what the group can edit with an innovative new interface for specifying any of your content – pages, posts, or any custom post types – right down to the single page or single post level.
 
 The plugin was written by [Boston University IS&T](http://www.bu.edu/tech) staff with design and UX support from the [Interactive Design](http://www.bu.edu/id) group in Marketing & Communications.
 
@@ -29,7 +29,7 @@ For more information check out [http://developer.bu.edu/bu-section-editing/](htt
 
 ### Developers
 
-For developer documentation, feature roadmaps and more visit the [plugin repository on Github](https://github.com/bu-ist/bu-section-editing/).
+For developer documentation, feature roadmaps and more visit the [plugin repository on Github](https://github.com/MeiKatz/secdor-section-editing/).
 
 
 ## Installation
@@ -44,7 +44,7 @@ Both plugins can be installed automatically through the WordPress admin interfac
 
 ### Manual Installation
 
-1. Upload the `bu-section-editing` folder to the `/wp-content/plugins/` directory
+1. Upload the `secdor-section-editing` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 To complete the advanced permissions workflow, install the [BU Versions Plugin](http://wordpress.org/extend/plugins/bu-versions "BU Versions Plugin").
@@ -58,7 +58,7 @@ To complete the advanced permissions workflow, install the [BU Versions Plugin](
 In order for a user to be added to a section group they must first be assigned a role that is limited to section editing capabilities. The plugin comes with one such role – “Section Editor”. Any user you would like to add to section editing groups must first have their role changed to section editor.
 It is also possible to use a role management plugin (such as [Members](http://wordpress.org/extend/plugins/members/)) to create your own “section editing”-ready roles.
 
-For more information on creating roles for use with section editing groups, see [the Github Wiki page](https://github.com/bu-ist/bu-section-editing/wiki/Custom-Section-Editing-Roles).
+For more information on creating roles for use with section editing groups, see [the Github Wiki page](https://github.com/MeiKatz/secdor-section-editing/wiki/Custom-Section-Editing-Roles).
 
 
 ## Screenshots

@@ -318,7 +318,7 @@ class BUSE_GroupsPage {
 
 	private $webdriver = null;
 
-	const MANAGE_GROUPS_URL = '/wp-admin/admin.php?page=buse_edit_groups';
+	const MANAGE_GROUPS_URL = '/wp-admin/admin.php?page=secdor-groups';
 
 	function __construct( $webdriver ) {
 		$this->webdriver = $webdriver;
@@ -343,7 +343,7 @@ class BUSE_EditGroupPage {
 
 	/* Markup constants */
 
-	const ADD_GROUP_URL = '/wp-admin/admin.php?page=buse_new_group';
+	const ADD_GROUP_URL = '/wp-admin/admin.php?page=secdor-group-new';
 
 	// Forms
 	const GROUP_EDIT_FORM = 'group-edit-form';

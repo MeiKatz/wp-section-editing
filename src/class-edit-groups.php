@@ -54,8 +54,8 @@ class Edit_Groups {
 	static public function register_post_type() {
 
 		$labels = array(
-			'name'                => _x( 'Section Groups', 'Post Type General Name', BUSE_TEXTDOMAIN ),
-			'singular_name'       => _x( 'Section Group', 'Post Type Singular Name', BUSE_TEXTDOMAIN ),
+			'name'                => _x( 'Section Groups', 'Post Type General Name', SECDOR_TEXTDOMAIN ),
+			'singular_name'       => _x( 'Section Group', 'Post Type Singular Name', SECDOR_TEXTDOMAIN ),
 		);
 
 		$args = array(
@@ -184,7 +184,7 @@ class Edit_Groups {
 		}
 
 		// Notify
-		add_action( 'bu_add_section_editing_group', $group );
+		add_action( 'secdor_add_section_editing_group', $group );
 
 		return $group;
 

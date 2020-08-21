@@ -116,8 +116,8 @@ class Flat_Permissions_Editor extends Permissions_Editor {
 
     // Publish information
     $meta = '';
-    $published_label = __( 'Published on', BUSE_TEXTDOMAIN );
-    $draft_label = __( 'Draft', BUSE_TEXTDOMAIN );
+    $published_label = __( 'Published on', SECDOR_TEXTDOMAIN );
+    $draft_label = __( 'Draft', SECDOR_TEXTDOMAIN );
 
     switch ( $p['metadata']['post_status'] ) {
 
@@ -139,7 +139,7 @@ class Flat_Permissions_Editor extends Permissions_Editor {
 
     // Perm actions button
     $perm_state = $p['metadata']['editable'] ? 'denied' : 'allowed';
-    $perm_label = $perm_state == 'allowed' ? __( 'Allow', BUSE_TEXTDOMAIN ) : __( 'Deny', BUSE_TEXTDOMAIN );
+    $perm_label = $perm_state == 'allowed' ? __( 'Allow', SECDOR_TEXTDOMAIN ) : __( 'Deny', SECDOR_TEXTDOMAIN );
     $button = sprintf( '<button class="edit-perms %s">%s</button>', $perm_state, $perm_label );
 
     // Anchor
@@ -177,7 +177,7 @@ class Flat_Permissions_Editor extends Permissions_Editor {
     $editable = Group_Permissions::group_can_edit( $this->group->id, $post->ID, 'ignore_global' );
     $perm = $editable ? 'allowed' : 'denied';
 
-    $post->post_title = empty( $post->post_title ) ? __( '(no title)', BUSE_TEXTDOMAIN ) : $post->post_title;
+    $post->post_title = empty( $post->post_title ) ? __( '(no title)', SECDOR_TEXTDOMAIN ) : $post->post_title;
 
     $p = array(
       'attr' => array(

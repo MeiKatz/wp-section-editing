@@ -13,11 +13,11 @@ class Groups_Admin_Ajax {
 
 	static public function register_hooks() {
 
-		add_action( 'wp_ajax_buse_site_users_script', array( __CLASS__, 'site_users_script' ) );
-		add_action( 'wp_ajax_buse_search_posts', array( __CLASS__, 'search_posts' ) );
-		add_action( 'wp_ajax_buse_render_post_list', array( __CLASS__, 'render_post_list' ) );
-		add_action( 'wp_ajax_buse_can_edit', array( __CLASS__, 'can_edit' ) );
-		add_action( 'wp_ajax_buse_can_move', array( __CLASS__, 'can_move' ) );
+		add_action( 'wp_ajax_secdor_site_users_script', array( __CLASS__, 'site_users_script' ) );
+		add_action( 'wp_ajax_secdor_search_posts', array( __CLASS__, 'search_posts' ) );
+		add_action( 'wp_ajax_secdor_render_post_list', array( __CLASS__, 'render_post_list' ) );
+		add_action( 'wp_ajax_secdor_can_edit', array( __CLASS__, 'can_edit' ) );
+		add_action( 'wp_ajax_secdor_can_move', array( __CLASS__, 'can_move' ) );
 
 	}
 
@@ -56,7 +56,7 @@ class Groups_Admin_Ajax {
 		}
 
 		header( 'Content-type: application/x-javascript' );
-		echo 'var buse_site_users = ' . json_encode( $return );
+		echo 'var secdor_site_users = ' . json_encode( $return );
 		die();
 
 	}

@@ -34,7 +34,7 @@ class Section_Editing_Upgrader {
 	public function populate_roles() {
 
 		// Allow plugins to skip installation of section editor role
-		$create_section_editor = apply_filters( 'buse_create_section_editor_role', true );
+		$create_section_editor = apply_filters( 'secdor_create_section_editor_role', true );
 
 		if ( $create_section_editor ) {
 
@@ -70,11 +70,11 @@ class Section_Editing_Upgrader {
 			Section_Editing_Plugin::$caps->add_caps( $role );
 
 			// Allow others to customize default section editor caps
-			do_action( 'buse_section_editor_caps', $role );
+			do_action( 'secdor_section_editor_caps', $role );
 
 		}
 
-		do_action( 'buse_populate_roles' );
+		do_action( 'secdor_populate_roles' );
 
 	}
 

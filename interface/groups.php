@@ -1,24 +1,24 @@
 <div class="wrap">
 	<div id="icon-section-groups" class="icon32"></div>
-	<h2><?php _e( 'Section Groups', BUSE_TEXTDOMAIN ); ?></h2>
-	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', BUSE_TEXTDOMAIN ); ?></a></p>
+	<h2><?php _e( 'Section Groups', SECDOR_TEXTDOMAIN ); ?></h2>
+	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', SECDOR_TEXTDOMAIN ); ?></a></p>
 	<table id="section-groups" class="wp-list-table widefat">
 		<thead>
 			<tr>
-				<th><?php _e( 'Name', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Description', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Members', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Editable', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Remove', BUSE_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Name', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Description', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Members', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Editable', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Remove', SECDOR_TEXTDOMAIN ); ?></th>
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
-				<th><?php _e( 'Name', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Description', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Members', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Editable', BUSE_TEXTDOMAIN ); ?></th>
-				<th><?php _e( 'Remove', BUSE_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Name', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Description', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Members', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Editable', SECDOR_TEXTDOMAIN ); ?></th>
+				<th><?php _e( 'Remove', SECDOR_TEXTDOMAIN ); ?></th>
 			</tr>
 		</tfoot>
 		<tbody>
@@ -37,7 +37,7 @@
 				<td><?php echo Secdor\Groups_Admin::group_permissions_string( $group ); ?></td>
 				<td>
 					<a class="submitdelete" href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'delete', array( 'id' => $group->id ) ); ?>">
-					<img src="<?php echo plugins_url( BUSE_PLUGIN_PATH . '/images/group_remove.png' ); ?>" alt="<?php esc_attr_e( 'Delete', BUSE_TEXTDOMAIN ); ?>"></a>
+					<img src="<?php echo plugins_url( SECDOR_PLUGIN_PATH . '/images/group_remove.png' ); ?>" alt="<?php esc_attr_e( 'Delete', SECDOR_TEXTDOMAIN ); ?>"></a>
 				</td>
 			</tr>
 			<?php $count++; ?>
@@ -45,5 +45,5 @@
 		<?php endif; ?>
 		</tbody>
 	</table>
-	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', BUSE_TEXTDOMAIN ); ?></a></p>
+	<p><a href="<?php echo Secdor\Groups_Admin::manage_groups_url( 'add' ); ?>" class="button-secondary"><?php _e( 'Add an Editor Group', SECDOR_TEXTDOMAIN ); ?></a></p>
 </div>

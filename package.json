@@ -1,8 +1,8 @@
 {
-  "name": "bu-section-editing",
+  "name": "secdor-section-editing",
   "version": "0.9.9",
   "description": "Enhances WordPress content editing workflow by providing section editing groups and permissions",
-  "main": "bu-section-editing.php",
+  "main": "secdor-section-editing.php",
   "directories": {
     "test": "tests"
   },
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bu-ist/bu-section-editing.git"
+    "url": "https://github.com/MeiKatz/secdor-section-editing.git"
   },
   "keywords": [
     "permissions",
@@ -25,12 +25,12 @@
     "boston university",
     "bu"
   ],
-  "author": "Boston University <webteam@bu.edu>",
+  "author": "Gregor Mitzka <gregor.mitzka@gmail.com>",
   "license": "GPLv2",
   "bugs": {
-    "url": "https://github.com/bu-ist/bu-section-editing/issues"
+    "url": "https://github.com/MeiKatz/secdor-section-editing/issues"
   },
-  "homepage": "https://github.com/bu-ist/bu-section-editing",
+  "homepage": "https://github.com/MeiKatz/secdor-section-editing",
   "devDependencies": {
     "grunt": "^1.0.2",
     "grunt-contrib-uglify": "^3.3.0",

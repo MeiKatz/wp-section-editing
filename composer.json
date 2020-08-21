@@ -1,5 +1,5 @@
 {
-    "name": "bu-ist/bu-section-editing",
+    "name": "MeiKatz/secdor-section-editing",
     "description": "Enhances WordPress content editing workflow by providing section editing groups and permissions",
     "license": "GPLv2",
     "authors": [
@@ -14,6 +14,10 @@
         {
             "name": "Anton Kachurin",
             "email": "antonk@bu.edu"
+        },
+        {
+            "name": "Gregor Mitzka",
+            "email": "gregor.mitzka@gmail.com"
         }
     ],
     "require": {},

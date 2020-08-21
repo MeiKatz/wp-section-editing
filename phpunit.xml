@@ -20,7 +20,7 @@
 
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<file>bu-section-editing.php</file>
+			<file>secdor-section-editing.php</file>
 			<file>src/class-edit-group.php</file>
 			<file>src/class-edit-groups.php</file>
 			<file>src/class-flat-permissions-editor.php</file>
