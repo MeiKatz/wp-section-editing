@@ -15,14 +15,21 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
   private $child_of = 0;
 
   protected function load() {
-
     // We don't need these
-    remove_filter( 'bu_navigation_filter_pages', 'bu_navigation_filter_pages_exclude' );
-    remove_filter( 'bu_navigation_filter_pages', 'bu_navigation_filter_pages_external_links' );
+    remove_filter(
+      'bu_navigation_filter_pages',
+      'bu_navigation_filter_pages_exclude'
+    );
+    remove_filter(
+      'bu_navigation_filter_pages',
+      'bu_navigation_filter_pages_external_links'
+    );
 
     // But we definitely need these
-    add_filter( 'bu_navigation_filter_pages', array( $this, 'filter_posts' ) );
-
+    add_filter(
+      'bu_navigation_filter_pages',
+      array( $this, 'filter_posts' )
+    );
   }
 
   // ____________________INTERFACE_________________________
@@ -31,12 +38,12 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
    *
    * @uses BU Navigation plugin
    */
-  public function query( $args = array() ) {
+  public function query( array $args = array() ) {
 
     $defaults = array(
       'child_of' => 0,
       'post_type' => $this->post_type,
-      );
+    );
 
     $r = wp_parse_args( $args, $defaults );
 
@@ -62,7 +69,7 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
     }
 
     // Make sure navigation plugin functions are available before querying
-    if ( ! function_exists( 'bu_navigation_get_pages' ) ) {
+    if ( !function_exists( 'bu_navigation_get_pages' ) ) {
       $this->posts = array();
       error_log( 'BU Navigation Plugin must be activated in order for hierarchical permissions editors to work' );
       return false;
@@ -76,38 +83,33 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
       'sections' => $sections,
       'post_types' => $r['post_type'],
       'suppress_urls' => true,
-      );
+    );
 
     $root_pages = bu_navigation_get_pages( $page_args );
     $this->posts = bu_navigation_pages_by_parent( $root_pages );
-
   }
 
   /**
    * Display posts using designated output format
    */
   public function display() {
-
     switch ( $this->format ) {
-
-      case 'json':
+      case "json":
         $posts = $this->get_posts( $this->child_of );
         echo json_encode( $posts );
         break;
 
-      case 'html': default:
-          echo $this->get_posts( $this->child_of );
+      case "html":
+      default:
+        echo $this->get_posts( $this->child_of );
         break;
-
     }
-
   }
 
   /**
    * Get posts intended for display by permissions editors
    */
   public function get_posts( $post_id = 0 ) {
-
     if ( array_key_exists( $post_id, $this->posts ) && ( count( $this->posts[ $post_id ] ) > 0 ) ) {
       $posts = $this->posts[ $post_id ];
     } else {
@@ -118,13 +120,13 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
     $output = null;
 
     switch ( $this->format ) {
-
-      case 'json':
+      case "json":
         $output = array();
         break;
 
-      case 'html':default:
-          $output = '';
+      case "html":
+      default:
+        $output = "";
         break;
     }
 
@@ -160,20 +162,18 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
 
       // Return post in correct format
       switch ( $this->format ) {
-
-        case 'json':
+        case "json":
           array_push( $output, $p );
           break;
 
-        case 'html': default:
-            $output .= get_post_markup( $p );
+        case "html":
+        default:
+          $output .= get_post_markup( $p );
           break;
-
       }
     }
 
     return $output;
-
   }
 
   /**
@@ -183,10 +183,16 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
    * The format of this markup lines up with default jstree markup
    */
   protected function get_post_markup( $p ) {
-
     $a = sprintf( '<a href="#">%s</a>', $p['data'] );
 
-    $descendents = ! empty( $p['children'] ) ? sprintf( "<ul>%s</ul>\n", $p['children'] ) : '';
+    $descendents = "";
+
+    if ( !empty( $p["children"] ) ) {
+      $descendents = sprintf(
+        "<ul>%s</ul>\n",
+        $p["children"]
+      );
+    }
 
     $markup = sprintf("<li id=\"%s\" class=\"%s\" rel=\"%s\" data-editable=\"%s\" data-editable-original=\"%s\">%s %s</li>\n",
       $p['attr']['id'],
@@ -222,16 +228,15 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
       ),
       'data' => array(
         'title' => esc_html( $title ),
-        ),
+      ),
       'metadata' => array(
         'editable' => $post->editable,
         'editable-original' => $post->editable,
-        ),
+      ),
       'children' => null,
-      );
+    );
 
     return $p;
-
   }
 
 
@@ -253,13 +258,13 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
       $group_meta = $wpdb->get_results(
         $wpdb->prepare(
           "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id IN ({$ids}) AND meta_value = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-          Group_Permissions::META_KEY,
+          Edit_Group::META_KEY,
           $this->group->id
         ),
         OBJECT_K
       ); // get results as objects in an array keyed on post_id
 
-      if ( ! is_array( $group_meta ) ) {
+      if ( !is_array( $group_meta ) ) {
         $group_meta = array();
       }
 
@@ -279,6 +284,5 @@ class Hierarchical_Permissions_Editor extends Permissions_Editor {
     }
 
     return $posts;
-
   }
 }

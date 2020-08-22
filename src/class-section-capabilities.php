@@ -67,27 +67,34 @@ class Section_Capabilities {
 	public function map_meta_cap( $caps, $cap, $user_id, $args ) {
 		global $post_ID;
 
-		$user = new WP_User( intval( $user_id ) );
+		$wp_user = new WP_User( intval( $user_id ) );
+		$edit_user = new Edit_User( $wp_user );
+
+		$post_id = $post_ID;
+
+		if ( isset( $args[0] ) ) {
+			$post_id = $args[0];
+		}
 
 		// if user already has the caps as passed by map_meta_cap() pre-filter or
 		// the user doesn't have the main "section editing" cap
-		if ( $this->user_has_caps( $user, $caps ) || ! $this->user_has_cap( $user, 'edit_in_section' ) ) {
+		if ( $edit_user->has_capabilities( $caps ) || !$edit_user->has_capability( 'edit_in_section' ) ) {
 			return $caps; // bail early
 		}
 
 		if ( $this->is_post_cap( $cap, 'edit_post' ) ) {
-			$caps = $this->_override_edit_caps( $user, $args[0], $caps );
+			$caps = $this->_override_edit_caps( $wp_user, $post_id, $caps );
 		}
 
 		if ( $this->is_post_cap( $cap, 'delete_post' ) ) {
-			$caps = $this->_override_delete_caps( $user, $args[0], $caps );
+			$caps = $this->_override_delete_caps( $wp_user, $post_id, $caps );
 		}
 
 		// As publish_posts does not come tied to a post ID, relying on the global $post_ID is fragile
 		// For instance, the "Quick Edit" interface of the edit posts page does not populate this
 		// global, and therefore the "Published" status is unavailable with this meta_cap check in place
 		if ( $this->is_post_cap( $cap, 'publish_posts' ) ) {
-			$caps = $this->_override_publish_caps( $user, $post_ID, $caps );
+			$caps = $this->_override_publish_caps( $wp_user, $post_id, $caps );
 		}
 
 		return $caps;
@@ -122,7 +129,7 @@ class Section_Capabilities {
 		return $post_id;
 	}
 
-	private function _override_edit_caps( $user, $post_id, $caps ) {
+	private function _override_edit_caps( WP_User $wp_user, $post_id, $caps ) {
 
 		if ( empty( $post_id ) ) {
 			return $caps;
@@ -133,9 +140,11 @@ class Section_Capabilities {
 		$post      = get_post( $post_id );
 		$post_type = get_post_type_object( $post->post_type );
 
+		$edit_user = new Edit_User( $wp_user );
+
 		if ( $post_type->hierarchical != true ) {
 
-			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $edit_user->can_edit_section( $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 			}
 		} else {
@@ -143,12 +152,12 @@ class Section_Capabilities {
 			if ( $this->is_parent_changing( $post ) ) {
 				$parent_id = $this->get_new_parent( $post );
 
-				if ( $post->post_status == 'publish' && Group_Permissions::can_edit_section( $user, $parent_id ) ) {
+				if ( $post->post_status == 'publish' && $edit_user->can_edit_section( $parent_id ) ) {
 					$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 				}
 			}
 
-			if ( $post_id && $post->post_status == 'publish' && Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $post_id && $post->post_status == 'publish' && $edit_user->can_edit_section( $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'edit', $post->post_type ) );
 			}
 		}
@@ -156,17 +165,22 @@ class Section_Capabilities {
 		return $caps;
 	}
 
-	private function _override_delete_caps( $user, $post_id, $caps ) {
+	private function _override_delete_caps( WP_User $wp_user, $post_id, $caps ) {
+
+		if ( empty( $post_id ) ) {
+			return $caps;
+		}
 
 		$post = get_post( $post_id );
 		$post_type = get_post_type_object( $post->post_type );
+		$edit_user = new Edit_User( $wp_user );
 
 		if ( $post_type->hierarchical != true ) {
-			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $edit_user->can_edit_section( $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'delete', $post->post_type ) );
 			}
 		} else {
-			if ( $post_id && in_array( $post->post_status, array( 'publish', 'trash' ) ) && Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $post_id && in_array( $post->post_status, array( 'publish', 'trash' ) ) && $edit_user->can_edit_section( $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'delete', $post->post_type ) );
 			}
 		}
@@ -174,11 +188,13 @@ class Section_Capabilities {
 		return $caps;
 	}
 
-	private function _override_publish_caps( $user, $post_id, $caps ) {
+	private function _override_publish_caps( WP_User $wp_user, $post_id, $caps ) {
 
 		if ( ! isset( $post_id ) ) {
 			return $caps;
 		}
+
+		$edit_user = new Edit_User( $wp_user );
 
 		$parent_id = null;
 
@@ -195,7 +211,7 @@ class Section_Capabilities {
 		}
 
 		if ( $post_type->hierarchical != true && $is_alt != true ) {
-			if ( Group_Permissions::can_edit_section( $user, $post_id ) ) {
+			if ( $edit_user->can_edit_section( $post_id ) ) {
 				$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 			}
 		} else {
@@ -205,11 +221,11 @@ class Section_Capabilities {
 				$parent_id = $this->get_new_parent( $post );
 
 				// Can't move published posts under sections they can't edit
-				if ( Group_Permissions::can_edit_section( $user, $parent_id ) ) {
+				if ( $edit_user->can_edit_section( $parent_id ) ) {
 					$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 				}
 			} else {
-				if ( isset( $post_id ) && Group_Permissions::can_edit_section( $user, $post->post_parent ) ) {
+				if ( isset( $post_id ) && $edit_user->can_edit_section( $post->post_parent ) ) {
 					$caps = array( $this->get_section_cap( 'publish', $post->post_type ) );
 				}
 			}
@@ -238,25 +254,6 @@ class Section_Capabilities {
 				$cap = 'edit_in_section';
 		}
 		return $cap;
-	}
-
-
-	public function user_has_caps( WP_User $user, $caps ) {
-
-		foreach ( $caps as $cap ) {
-			if ( ! $this->user_has_cap( $user, $cap ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public function user_has_cap( WP_User $user, $cap ) {
-		if ( isset( $user->allcaps[ $cap ] ) && $user->allcaps[ $cap ] ) {
-			return true;
-		}
-		return false;
 	}
 
 	/**

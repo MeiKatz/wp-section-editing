@@ -7,7 +7,6 @@ use \WP_Query;
  * Abstract base class for post permissions editor
  */
 abstract class Permissions_Editor {
-
   protected $group;
   protected $post_type;
   protected $posts;
@@ -17,13 +16,12 @@ abstract class Permissions_Editor {
   public $post_count;
   public $max_num_pages;
 
-  public $format = 'html';
+  public $format = "html";
 
   /**
    * $group can be either a Secdor\Edit_Group object or a group ID
    */
-  function __construct( $group, $post_type ) {
-
+  public function __construct( $group, $post_type ) {
     if ( is_numeric( $group ) ) {
 
       $group_id = intval( $group );
@@ -34,7 +32,6 @@ abstract class Permissions_Editor {
 
       // Could be a new group
       if ( ! $this->group ) {
-
         $this->group = new Edit_Group();
       }
     } else if ( $group instanceof Edit_Group ) {
@@ -49,19 +46,17 @@ abstract class Permissions_Editor {
     $this->post_type = $post_type;
 
     $this->load();
-
   }
 
-  public function query( $args = array() ) {
-
+  public function query( array $args = array() ) {
     $defaults = array(
-      'post_type' => $this->post_type,
-      'post_status' => 'any',
-      'posts_per_page' => $this->per_page,
-      'orderby' => 'modified',
-      'order' => 'DESC',
-      'paged' => 1,
-      );
+      "post_type" => $this->post_type,
+      "post_status" => "any",
+      "posts_per_page" => $this->per_page,
+      "orderby" => "modified",
+      "order" => "DESC",
+      "paged" => 1,
+    );
 
     $args = wp_parse_args( $args, $defaults );
 
@@ -69,13 +64,12 @@ abstract class Permissions_Editor {
 
     // Parse results
     $this->posts = $query->posts;
-    $this->page = $args['paged'];
+    $this->page = $args["paged"];
     $this->found_posts = $query->found_posts;
     $this->post_count = $query->post_count;
     $this->max_num_pages = $query->max_num_pages;
 
     wp_reset_postdata();
-
   }
 
   abstract public function get_posts( $post_id = 0 );
@@ -84,5 +78,4 @@ abstract class Permissions_Editor {
   abstract protected function load();
   abstract protected function format_post( $post, $has_children = false );
   abstract protected function get_post_markup( $p );
-
 }

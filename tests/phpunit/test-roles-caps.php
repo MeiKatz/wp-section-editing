@@ -77,8 +77,8 @@ class Test_Secdor_Section_Editing_Caps extends WP_UnitTestCase {
 			),
 
 		);
-		$this->addUser( 'section_editor1' );
-		$this->addUser( 'section_editor2' );
+		$this->add_user( 'section_editor1' );
+		$this->add_user( 'section_editor2' );
 
 		$section_editor1 = get_user_by( 'login', 'section_editor1' );
 		$section_editor2 = get_user_by( 'login', 'section_editor2' );

@@ -76,8 +76,15 @@ class Test_Secdor_Edit_Groups extends WP_UnitTestCase {
 		$this->assertNotNull( $group->modified );
 
 		// Permissions
-		$allowed_posts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowed_pages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowed_posts = $group->get_allowed_posts([
+			"post_type" => "post",
+			"fields" => "ids",
+		]);
+
+		$allowed_pages = $group->get_allowed_posts([
+			"post_type" => "page",
+			"fields" => "ids",
+		]);
 
 		$expected_allowed_posts = array_keys( $data['perms']['post'] );
 		$expected_allowed_pages = array_keys( $data['perms']['page'] );
@@ -118,8 +125,15 @@ class Test_Secdor_Edit_Groups extends WP_UnitTestCase {
 		$this->assertNotEquals( $original->modified, $group->modified );
 
 		// Permissions
-		$allowed_posts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowed_pages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowed_posts = $group->get_allowed_posts([
+			"post_type" => "post",
+			"fields" => "ids",
+		]);
+
+		$allowed_pages = $group->get_allowed_posts([
+			"post_type" => "page",
+			"fields" => "ids",
+		]);
 
 		$expected_allowed_posts = array_keys( $updates['perms']['post'] );
 		$expected_allowed_pages = array_keys( $updates['perms']['page'] );

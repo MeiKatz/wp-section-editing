@@ -28,8 +28,12 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 		$posts = $this->factory->post->create_many( 3, array( 'post_type' => 'post' ) );
 		$pages = $this->factory->post->create_many( 5, array( 'post_type' => 'page' ) );
 
-		$allowedposts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post' ) );
-		$allowedpages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page' ) );
+		$allowedposts = $group->get_allowed_posts([
+			"post_type" => "post",
+		]);
+		$allowedpages = $group->get_allowed_posts([
+			"post_type" => "page",
+		]);
 
 		$this->assertTrue( empty( $allowedposts ) );
 		$this->assertTrue( empty( $allowedpages ) );
@@ -39,10 +43,16 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 			'page' => array( 'allowed' => $pages ),
 			);
 
-		Secdor\Group_Permissions::update_group_permissions( $group->id, $perms );
+		$group->update_permissions( $perms );
 
-		$allowedposts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowedpages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowedposts = $group->get_allowed_posts([
+			"post_type" => "post",
+			"fields" => "ids",
+		]);
+		$allowedpages = $group->get_allowed_posts([
+			"post_type" => "page",
+			"fields" => "ids",
+		]);
 		$allowedposts = array_map( 'intval', $allowedposts );
 		$allowedpages = array_map( 'intval', $allowedpages );
 		$this->assertEquals( asort( $posts ), asort( $allowedposts ) );
@@ -64,17 +74,27 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 
 		$group = $this->factory->group->create( array( 'name' => __FUNCTION__, 'perms' => $perms ) );
 
-		$allowedposts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post', 'fields' => 'ids' ) );
-		$allowedpages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page', 'fields' => 'ids' ) );
+		$allowedposts = $group->get_allowed_posts([
+			"post_type" => "post",
+			"fields" => "ids",
+		]);
+		$allowedpages = $group->get_allowed_posts([
+			"post_type" => "page",
+			"fields" => "ids",
+		]);
 		$allowedposts = array_map( 'intval', $allowedposts );
 		$allowedpages = array_map( 'intval', $allowedpages );
 		$this->assertEquals( asort( $posts ), asort( $allowedposts ) );
 		$this->assertEquals( asort( $pages ), asort( $allowedpages ) );
 
-		Secdor\Group_Permissions::delete_group_permissions( $group->id );
+		$group->delete_permissions();
 
-		$allowedposts = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'post' ) );
-		$allowedpages = Secdor\Group_Permissions::get_allowed_posts_for_group( $group->id, array( 'post_type' => 'page' ) );
+		$allowedposts = $group->get_allowed_posts([
+			"post_type" => "post",
+		]);
+		$allowedpages = $group->get_allowed_posts([
+			"post_type" => "page",
+		]);
 
 		$this->assertTrue( empty( $allowedposts ) );
 		$this->assertTrue( empty( $allowedpages ) );
@@ -102,12 +122,12 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, reset( $posts ) ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, next( $posts ) ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, reset( $pages ) ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, next( $pages ) ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, reset( $custom_posts ) ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, next( $custom_posts ) ) );
+		$this->assertTrue( $group->can_edit( reset( $posts ) ) );
+		$this->assertFalse( $group->can_edit( next( $posts ) ) );
+		$this->assertFalse( $group->can_edit( reset( $pages ) ) );
+		$this->assertTrue( $group->can_edit( next( $pages ) ) );
+		$this->assertTrue( $group->can_edit( reset( $custom_posts ) ) );
+		$this->assertTrue( $group->can_edit( next( $custom_posts ) ) );
 	}
 
 	/**
@@ -122,44 +142,44 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 
 		// 1. New top-level page (should not be editable)
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => 0, 'post_status' => 'publish' ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertFalse( $group->can_edit( $post ) );
 
 		// 2. Page place in editable section (should be editable)
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => $allowed, 'post_status' => 'publish' ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertTrue( $group->can_edit( $post ) );
 
 		// 3. Non-hierarchical post type (should not be editable)
 		$post = $this->factory->post->create( array( 'post_type' => 'post', 'post_status' => 'publish' ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertFalse( $group->can_edit( $post ) );
 
 		// 4. Draft -> Publish in non-editable section
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => 0, 'post_status' => 'draft' ) );
 		$post = wp_update_post( array( 'ID' => $post, 'post_status' => 'publish' ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertFalse( $group->can_edit( $post ) );
 
 		// 5. Draft -> Publish in editable section
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => 0, 'post_status' => 'draft' ) );
 		$post = wp_update_post( array( 'ID' => $post, 'post_status' => 'publish', 'post_parent' => $allowed ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertTrue( $group->can_edit( $post ) );
 
 		// 6. Publish -> draft
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => $allowed, 'post_status' => 'publish' ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertTrue( $group->can_edit( $post ) );
 		$post = wp_update_post( array( 'ID' => $post, 'post_status' => 'draft' ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertFalse( $group->can_edit( $post ) );
 
 		// 7. Publish -> trash (should not lose section editing privileges)
 		$post = $this->factory->post->create( array( 'post_type' => 'page', 'post_parent' => $allowed, 'post_status' => 'publish' ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertTrue( $group->can_edit( $post ) );
 		$post = wp_update_post( array( 'ID' => $post, 'post_status' => 'trash' ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $post ) );
+		$this->assertTrue( $group->can_edit( $post ) );
 
 		register_post_type( 'bu_link', array( 'hierarchical' => true ) );
 		$link = $this->factory->post->create( array( 'post_type' => 'bu_link', 'post_parent' => $allowed, 'post_status' => 'publish' ) );
-		$this->assertTrue( Secdor\Group_Permissions::group_can_edit( $group->id, $link ) );
+		$this->assertTrue( $group->can_edit( $link ) );
 
 		register_post_type( 'flat', array( 'hierarchical' => false ) );
 		$flat = $this->factory->post->create( array( 'post_type' => 'flat', 'post_parent' => $allowed, 'post_status' => 'publish' ) );
-		$this->assertFalse( Secdor\Group_Permissions::group_can_edit( $group->id, $flat ) );
+		$this->assertFalse( $group->can_edit( $flat ) );
 	}
 }

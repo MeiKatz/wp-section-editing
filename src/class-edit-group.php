@@ -1,38 +1,106 @@
 <?php
 namespace Secdor;
 
+use \WP_Query;
+use \WP_User;
+use \WP_Post;
+use \StdClass;
+
 /**
  * A Section Editing group model
  */
 class Edit_Group {
-
-  private $id = null;
-  private $name = null;
-  private $description = null;
-  private $users = array();
-  private $global_edit = array();
-  private $created = null;
-  private $modified = null;
-
   const MAX_NAME_LENGTH = 60;
+  const META_KEY        = "_bu_section_group";
+  const MEMBER_KEY      = "_bu_section_group_users";
+  const GLOBAL_EDIT     = "_bu_section_group_global_edit";
+  const POST_TYPE_NAME  = "buse_group";
+
+  private $id           = -1;
+  private $name         = "";
+  private $description  = "";
+  private $users        = array();
+  private $global_edit  = array();
+  private $created      = null;
+  private $modified     = null;
+
+  /**
+   * Maps a WP post object to group object
+   *
+   * @return Secdor\Edit_Group $group Resulting group object
+   */
+  public static function from_post( WP_Post $post ) {
+    // Map post -> group fields
+    $data["id"] = $post->ID;
+    $data["name"] = $post->post_title;
+    $data["description"] = $post->post_content;
+    $data["created"] = strtotime( $post->post_date );
+    $data["modified"] = strtotime( $post->post_modified );
+
+    // Users and global_edit setting are stored in post meta
+    $users = get_post_meta(
+      $post->ID,
+      self::MEMBER_KEY,
+      true
+    );
+
+    $data["users"] = (
+      $users
+        ? $users
+        : array()
+    );
+
+    $global_edit = get_post_meta(
+      $post->ID,
+      self::GLOBAL_EDIT,
+      true
+    );
+
+    $data["global_edit"] = $global_edit;
+
+    // Create a new group
+    return new self( $data );
+  }
+
+  /**
+   * Create a new group
+   *
+   * @todo test coverage
+   *
+   * @param array $data a parameter list of group data for insertion
+   * @return bool|Secdor\Edit_Group False on failure.  A Secdor\Edit_Group instance for the new group on success.
+   */
+  public static function create( array $data ) {
+    // Create new group
+    $group = new self( $data );
+
+    if ( $group->save() ) {
+      return $group;
+    }
+
+    return null;
+  }
 
   /**
    * Instantiate new edit group
    *
    * @param array $args optional parameter list to merge with defaults
    */
-  function __construct( $args = array() ) {
-
+  public function __construct( array $args = array() ) {
     // Merge defaults
     $defaults = $this->defaults();
     $args = wp_parse_args( $args, $defaults );
 
     // Update fields based on incoming parameter list
-    $fields = array_keys( $this->get_attributes() );
-    foreach ( $fields as $key ) {
-      $this->$key = $args[ $key ];
+    $this->assign_attributes( $args );
+  }
+
+  public function id() {
+    if ( $this->id === -1 ) {
+      return null;
     }
 
+    return $this->id;
   }
 
   /**
@@ -41,18 +109,60 @@ class Edit_Group {
    * @return array default values for edit group model
    */
   private function defaults() {
+    $attrs = $this->attribute_names();
 
-    $fields = array(
-      'id' => -1,
-      'name' => '',
-      'description' => '',
-      'users' => array(),
-      'global_edit' => array(),
-      'created' => time(),
-      'modified' => time(),
-      );
+    // derive default attribut values
+    // from property definitions
+    return array_merge(
+      $attrs,
+      array(
+        "created" => time(),
+        "modified" => time(),
+      ),
+    );
+  }
 
-    return $fields;
+  /**
+   * Query for all posts that have section editing permissions assigned for this group
+   *
+   * @uses WP_Query
+   *
+   * @param array $args an optional array of WP_Query arguments, will override defaults
+   * @return array an array of posts that have section editing permissions for this group
+   */
+  public function get_allowed_posts( array $args = array() ) {
+    $defaults = array(
+      "post_type" => "page",
+      "meta_key" => self::META_KEY,
+      "meta_value" => $this->id,
+      "posts_per_page" => -1,
+    );
+
+    $args = wp_parse_args( $args, $defaults );
+
+    $query = new WP_Query( $args );
+
+    return $query->posts;
+  }
+
+  /**
+   * Maps a group object to post object
+   *
+   * @return StdClass $post Resulting post object
+   */
+  public function to_post() {
+    $post = new StdClass();
+
+    if ( $this->id > 0 ) {
+      $post->ID = $this->id;
+    }
+
+    $post->post_type = self::POST_TYPE_NAME;
+    $post->post_title = $this->name;
+    $post->post_content = $this->description;
+    $post->post_status = "publish";
+
+    return new WP_Post( $post );
   }
 
   /**
@@ -60,10 +170,20 @@ class Edit_Group {
    *
    * @todo test coverage
    *
+   * @param int|WP_User|Secdor\Edit_User $user : either an int-like
+   *  value, an instance of WP_User, or an instance of
+   *  Secdor\Edit_User. It represents the user to check for.
+   *
    * @return bool true if user exists, false otherwise
    */
-  public function has_user( $user_id ) {
-    return in_array( $user_id, $this->users );
+  public function has_user( $user ) {
+    $user_id = $this->user_id_of( $user );
+
+    if ( $user_id === null ) {
+      return false;
+    }
+
+    return isset( $this->users[ $user_id ] );
   }
 
   /**
@@ -71,15 +191,17 @@ class Edit_Group {
    *
    * @todo test coverage
    *
-   * @param int $user_id WordPress user ID to add for this group
+   * @param int|WP_User|Secdor\Edit_User $user : either an int-like
+   *  value, an instance of WP_User, or an instance of
+   *  Secdor\Edit_User. It represents the user to add to this
+   *  group.
    */
-  public function add_user( $user_id ) {
-
+  public function add_user( $user ) {
     // need to make sure the user is a member of the site
-    if ( ! $this->has_user( $user_id ) ) {
-      array_push( $this->users, $user_id );
+    if ( !$this->has_user( $user ) ) {
+      $user_id = $this->user_id_of( $user );
+      $this->users[ $user_id ] = true;
     }
-
   }
 
   /**
@@ -87,14 +209,16 @@ class Edit_Group {
    *
    * @todo test coverage
    *
-   * @param int $user_id WordPress user ID to remove from this group
+   * @param int|WP_User|Secdor\Edit_User $user : either an int-like
+   *  value, an instance of WP_User, or an instance of
+   *  Secdor\Edit_User. It represents the user to remove from this
+   *  group.
    */
-  public function remove_user( $user_id ) {
-
-    if ( $this->has_user( $user_id ) ) {
-      unset( $this->users[ array_search( $user_id, $this->users ) ] );
+  public function remove_user( $user ) {
+    if ( $this->has_user( $user ) ) {
+      $user_id = $this->user_id_of( $user );
+      unset( $this->users[ $user_id ] );
     }
-
   }
 
   /**
@@ -102,31 +226,108 @@ class Edit_Group {
    *
    * @param array $args an array of key => value parameters to update
    */
-  public function update( $args = array() ) {
+  public function assign_attributes( $args = array() ) {
+    $names = array_keys( $this->attribute_names() );
 
-    $valid_fields = array_keys( $this->get_attributes() );
-
-    foreach ( $args as $key => $val ) {
-      if ( in_array( $key, $valid_fields ) ) {
-        $this->$key = $val;
+    foreach ( $args as $name => $value ) {
+      if ( in_array( $name, $names ) ) {
+        $this->$name = $value;
       }
     }
+  }
 
+  public function save() {
+    // Map group data to post for update
+    $post = $this->to_post();
+
+    // Update DB
+    $result = wp_insert_post( $post );
+
+    if ( is_wp_error( $result ) ) {
+      error_log(
+        sprintf(
+          "Error updating group %s: %s",
+          $this->id(),
+          $result->get_error_message()
+        )
+      );
+
+      return false;
+    }
+
+    if ( $this->id() === null ) {
+      $this->assign_attributes([
+        "id" => $result,
+      ]);
+    }
+
+    // Update modified time stamp
+    $this->assign_attributes([
+      "modified" => get_post_modified_time(
+        "U", false, $result
+      )
+    ]);
+
+    // Update meta data
+    update_post_meta(
+      $this->id(),
+      self::MEMBER_KEY,
+      $this->users
+    );
+
+    update_post_meta(
+      $this->id(),
+      self::GLOBAL_EDIT,
+      $this->global_edit
+    );
+
+    return true;
+  }
+
+  public function update_attributes( array $data ) {
+    // Update group data
+    $this->assign_attributes( $data );
+
+    return $this->save();
   }
 
   /**
-   * Returns privata data field keys as an array of attribute names
+   * Returns private data field keys as an array of attribute names
    *
    * Used for data serialization
    */
-  public function get_attributes() {
-
+  private function attribute_names() {
     return get_object_vars( $this );
+  }
 
+  private function attributes() {
+    $names = $this->attribute_names();
+    $attrs = array();
+
+    foreach ( $names as $name ) {
+      $attrs[ $name ] = $this->$name;
+    }
+
+    return $attrs;
+  }
+
+  private function user_id_of( $user ) {
+    if ( $user instanceof WP_User ) {
+      return $user->ID;
+    }
+
+    if ( $user instanceof Edit_User ) {
+      return $user->id();
+    }
+
+    if ( is_numeric( $user ) ) {
+      return intval( $user );
+    }
+
+    return null;
   }
 
   public function __get( $key ) {
-
     if ( isset( $this->$key ) ) {
       return $this->$key;
     }
@@ -135,8 +336,141 @@ class Edit_Group {
   }
 
   public function __set( $key, $val ) {
-
     $this->$key = $val;
+  }
 
+  /**
+   * Update permissions for a group
+   *
+   * @param array $permissions Permissions, as an associative array indexed by post type
+   */
+  public function update_permissions( array $permissions ) {
+    global $wpdb;
+
+    foreach ( $permissions as $post_type => $ids_by_status ) {
+      if ( !is_array( $ids_by_status ) ) {
+        error_log( "Unexpected value found while updating permissions: $ids_by_status" );
+        continue;
+      }
+
+      // Incoming allowed posts
+      $allowed_ids = (
+        isset( $ids_by_status['allowed'] )
+          ? $ids_by_status['allowed']
+          : array()
+      );
+
+      if ( !empty( $allowed_ids ) ) {
+        // Make sure we don't add allowed meta twice
+        $previously_allowed = $wpdb->get_col(
+          $wpdb->prepare(
+            "SELECT post_id FROM {$wpdb->postmeta} WHERE post_id IN (%s) AND meta_key = %s AND meta_value = %s",
+            implode( ',', $allowed_ids ),
+            self::META_KEY,
+            $this->id
+          )
+        );
+
+        $additions = array_merge(
+          array_diff(
+            $allowed_ids,
+            $previously_allowed
+          )
+        );
+
+        foreach ( $additions as $post_id ) {
+          add_post_meta(
+            $post_id,
+            self::META_KEY,
+            $this->id
+          );
+        }
+      }
+
+      // Incoming restricted posts
+      $denied_ids = (
+        isset( $ids_by_status['denied'] )
+          ? $ids_by_status['denied']
+          : array()
+      );
+
+      if ( !empty( $denied_ids ) ) {
+        // Sanitize the list of IDs for direct use in the query.
+        $denied_ids_str = implode( ',', array_map( 'intval', $denied_ids ) );
+
+        // Select meta_id's for removal based on incoming posts
+        $denied_meta_ids = $wpdb->get_col(
+          $wpdb->prepare(
+            "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id IN ({$denied_ids_str}) AND meta_key = %s AND meta_value = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            self::META_KEY,
+            $this->id
+          )
+        );
+
+        // Bulk deletion
+        if ( !empty( $denied_meta_ids ) ) {
+          // Sanitize the list of IDs for direct use in the query.
+          $denied_meta_ids_str = implode( ',', array_map( 'intval', $denied_meta_ids ) );
+
+          // Remove allowed status in one query
+          $wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_id IN ({$denied_meta_ids_str})" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+          // Purge cache
+          foreach ( $denied_ids as $post_id ) {
+            wp_cache_delete( $post_id, 'post_meta' );
+          }
+        }
+      }
+    }
+  }
+
+  public function delete_permissions() {
+    $supported_post_types = Group_Permissions::get_supported_post_types( 'names' );
+
+    $meta_query = array(
+      'key' => self::META_KEY,
+      'value' => $this->id,
+      'compare' => 'LIKE',
+    );
+
+    $args = array(
+      'post_type' => $supported_post_types,
+      'meta_query' => array( $meta_query ),
+      'posts_per_page' => -1,
+      'fields' => 'ids',
+    );
+
+    $query = new WP_Query( $args );
+
+    foreach ( $query->posts as $post_id ) {
+      delete_post_meta(
+        $post_id,
+        self::META_KEY,
+        $this->id
+      );
+    }
+  }
+
+  /**
+   * Can this group edit a particular post
+   */
+  public function can_edit(
+    $post_id,
+    $ignore = ""
+  ) {
+    if ( 'ignore_global' !== $ignore ) {
+      $groups = Edit_Groups::get_instance();
+
+      if ( $groups->post_is_globally_editable_by_group( $post_id, $this->id ) ) {
+        return true;
+      }
+    }
+
+    $allowed_groups = get_post_meta( $post_id, self::META_KEY );
+
+    return (
+      is_array( $allowed_groups )
+        && in_array( $this->id, $allowed_groups )
+    );
   }
 }

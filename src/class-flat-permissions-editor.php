@@ -29,37 +29,38 @@ class Flat_Permissions_Editor extends Permissions_Editor {
    * Display posts using designated output format
    */
   public function display() {
-
     switch ( $this->format ) {
-
-      case 'json':
+      case "json":
         $output = $this->get_posts();
         echo json_encode( $output );
         break;
 
-      case 'html':default:
-          echo $this->get_posts();
+      case "html":
+      default:
+        echo $this->get_posts();
         break;
     }
-
   }
 
   /**
    * Get posts intended for display by permissions editors
    */
   public function get_posts( $post_id = 0 ) {
+    switch ( $this->format ) {
+      case "json":
+        $posts = array();
+        break;
 
-    if ( $this->format == 'json' ) {
-      $posts = array();
-    } else if ( $this->format == 'html' ) {
-      $posts = '';
+      case "html":
+      default:
+        $posts = "";
+        break;
     }
 
-    if ( ! empty( $this->posts ) ) {
-
+    if ( !empty( $this->posts ) ) {
       $count = 0;
 
-      if ( $this->format == 'html' ) {
+      if ( $this->format == "html" ) {
         $posts = '<ul class="perm-list flat">';
       }
 
@@ -69,7 +70,11 @@ class Flat_Permissions_Editor extends Permissions_Editor {
         $p = $this->format_post( $post );
 
         // Alternating table rows for prettiness
-        $alt_class = $count % 2 ? '' : 'alternate';
+        $alt_class = (
+          $count % 2
+            ? ""
+            : "alternate"
+        );
 
         if ( $alt_class ) {
           $p['attr']['class'] = $alt_class;
@@ -77,13 +82,13 @@ class Flat_Permissions_Editor extends Permissions_Editor {
 
         // Add this post with the specified format
         switch ( $this->format ) {
-
-          case 'json':
+          case "json":
             array_push( $posts, $p );
             break;
 
-          case 'html': default:
-              $posts .= $this->get_post_markup( $p );
+          case "html":
+          default:
+            $posts .= $this->get_post_markup( $p );
             break;
         }
 
@@ -91,16 +96,15 @@ class Flat_Permissions_Editor extends Permissions_Editor {
 
       }
 
-      if ( $this->format == 'html' ) {
+      if ( $this->format == "html" ) {
         $posts .= '</ul>';
       }
     } else {
-          $labels = get_post_type_object( $this->post_type )->labels;
-          $posts = sprintf( '<ul class="perm-list flat"><li><p>%s</p></li></ul>', $labels->not_found );
+      $labels = get_post_type_object( $this->post_type )->labels;
+      $posts = sprintf( '<ul class="perm-list flat"><li><p>%s</p></li></ul>', $labels->not_found );
     }
 
     return $posts;
-
   }
 
   /**
@@ -120,7 +124,6 @@ class Flat_Permissions_Editor extends Permissions_Editor {
     $draft_label = __( 'Draft', SECDOR_TEXTDOMAIN );
 
     switch ( $p['metadata']['post_status'] ) {
-
       case 'publish':
         $meta = " &mdash; $published_label {$p['metadata']['post_date']}";
         break;
@@ -128,7 +131,6 @@ class Flat_Permissions_Editor extends Permissions_Editor {
       case 'draft':
         $meta = " &mdash; <em>$draft_label</em>";
         break;
-
     }
 
     // Bulk Edit Checkbox
@@ -162,7 +164,6 @@ class Flat_Permissions_Editor extends Permissions_Editor {
     );
 
     return $li;
-
   }
 
   /**
@@ -173,11 +174,18 @@ class Flat_Permissions_Editor extends Permissions_Editor {
    * @todo merge with hierarchical format_post logic
    */
   public function format_post( $post, $has_children = false ) {
+    $editable = $this->group->can_edit( $post->ID, 'ignore_global' );
+    $perm = (
+      $editable
+        ? "allowed"
+        : "denied"
+    );
 
-    $editable = Group_Permissions::group_can_edit( $this->group->id, $post->ID, 'ignore_global' );
-    $perm = $editable ? 'allowed' : 'denied';
-
-    $post->post_title = empty( $post->post_title ) ? __( '(no title)', SECDOR_TEXTDOMAIN ) : $post->post_title;
+    $post->post_title = (
+      empty( $post->post_title )
+        ? __( '(no title)', SECDOR_TEXTDOMAIN )
+        : $post->post_title
+    );
 
     $p = array(
       'attr' => array(
@@ -195,10 +203,9 @@ class Flat_Permissions_Editor extends Permissions_Editor {
         'post_status' => $post->post_status,
         'editable' => $editable,
         'editable-original' => $editable,
-        ),
-      );
+      ),
+    );
 
     return $p;
-
   }
 }

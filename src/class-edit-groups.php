@@ -10,10 +10,6 @@ use \StdClass;
  */
 class Edit_Groups {
 
-	const POST_TYPE_NAME = 'buse_group';
-	const MEMBER_KEY = '_bu_section_group_users';
-	const GLOBAL_EDIT = '_bu_section_group_global_edit';
-
 	public $groups = array();
 
 	static protected $instance;
@@ -77,7 +73,7 @@ class Edit_Groups {
 			'capability_type'     => 'post',
 		);
 
-		register_post_type( self::POST_TYPE_NAME, $args );
+		register_post_type( Edit_Group::POST_TYPE_NAME, $args );
 
 	}
 
@@ -166,28 +162,28 @@ class Edit_Groups {
 	 * @param array $data an array of parameters for group initialization
 	 * @return Secdor\Edit_Group the group that was just added
 	 */
-	public function add_group( $data ) {
-
+	public function add_group(
+		array $data
+	) {
 		// Sanitize input
 		$this->_clean_group_data( $data );
 
 		// Create new group from args
-		$group = $this->insert( $data );
+		$group = Edit_Group::create( $data );
 
-		if ( ! $group instanceof Secdor\Edit_Group ) {
+		if ( $group === null ) {
 			return false;
 		}
 
 		// Set permissions
 		if ( isset( $data['perms'] ) ) {
-			Secdor\Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
+			$group->update_permissions( $data['perms'] );
 		}
 
 		// Notify
 		add_action( 'secdor_add_section_editing_group', $group );
 
 		return $group;
-
 	}
 
 	/**
@@ -197,9 +193,13 @@ class Edit_Groups {
 	 * @param array $data an array of parameters with group fields to update
 	 * @return Secdor\Edit_Group|bool the group that was just updated or false if none existed
 	 */
-	public function update_group( $id, $data = array() ) {
+	public function update_group(
+		$id,
+		array $data = array()
+	) {
+		$group = $this->get( $id );
 
-		if ( $this->get( $id ) === false ) {
+		if ( !$group ) {
 			return false;
 		}
 
@@ -207,19 +207,14 @@ class Edit_Groups {
 		$this->_clean_group_data( $data );
 
 		// Update group.
-		$group = $this->update( $id, $data );
-
-		if ( ! $group instanceof Secdor\Edit_Group ) {
-			return false;
-		}
+		$group->update_attributes( $data );
 
 		// Update permissions.
 		if ( isset( $data['perms'] ) ) {
-			Secdor\Group_Permissions::update_group_permissions( $group->id, $data['perms'] );
+			$group->update_permissions( $data['perms'] );
 		}
 
 		return $group;
-
 	}
 
 	/**
@@ -246,7 +241,7 @@ class Edit_Groups {
 		}
 
 		// Remove group permissions.
-		Secdor\Group_Permissions::delete_group_permissions( $id );
+		$group->delete_permissions();
 
 		return true;
 
@@ -400,7 +395,7 @@ class Edit_Groups {
 		// Prepare the first section of the SQL statement.
 		$count_query = $wpdb->prepare(
 			"SELECT ID FROM {$wpdb->posts} WHERE ( ID IN ( SELECT post_ID FROM {$wpdb->postmeta} WHERE meta_key = %s",
-			Group_Permissions::META_KEY
+			Edit_Group::META_KEY
 		);
 
 		// Build the remaining SQL from previously prepared statements. The `group_ids` array is forced to integer values for safety.
@@ -431,7 +426,7 @@ class Edit_Groups {
 	public function load() {
 
 		$args = array(
-			'post_type' => self::POST_TYPE_NAME,
+			'post_type' => Edit_Group::POST_TYPE_NAME,
 			'numberposts' => -1,
 			'order' => 'ASC',
 			);
@@ -439,14 +434,10 @@ class Edit_Groups {
 		$group_posts = get_posts( $args );
 
 		if ( is_array( $group_posts ) ) {
-
 			foreach ( $group_posts as $group_post ) {
-
-				$this->groups[] = $this->_post_to_group( $group_post );
-
+				$this->groups[] = Edit_Group::from_post( $group_post );
 			}
 		}
-
 	}
 
 	/**
@@ -454,123 +445,18 @@ class Edit_Groups {
 	 *
 	 * @todo refactor so that both insert and update groups utilize this method
 	 * @todo test coverage
+	 *
+	 * @param bool : return true if all groups could be
+	 *	saved successfully
 	 */
 	public function save() {
-
-		$result = true;
-
-		foreach ( $this->groups as $group ) {
-
-			$postdata = $this->_group_to_post( $group );
-
-			// Update DB
-			$result = wp_insert_post( $postdata );
-
-			// Set group ID with post ID if needed
-			if ( $group->id < 0 ) {
-				$group->id = $result;
-			}
-
-			if ( is_wp_error( $result ) ) {
-				error_log( sprintf( 'Error updating group %s: %s', $group->id, $result->get_error_message() ) );
-				$result = false;
-			}
-
-			// Update meta data
-			update_post_meta( $group->id, self::MEMBER_KEY, $group->users );
-			update_post_meta( $group->id, self::GLOBAL_EDIT, $group->global_edit );
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Insert a new group
-	 *
-	 * @todo test coverage
-	 *
-	 * @param array $data a parameter list of group data for insertion
-	 * @return bool|Secdor\Edit_Group False on failure.  A Secdor\Edit_Group instance for the new group on success.
-	 */
-	protected function insert( $data ) {
-
-		// Create new group
-		$group = new Edit_Group( $data );
-
-		// Map group data to post for insertion
-		$postdata = $this->_group_to_post( $group );
-
-		// Insert into DB
-		$result = wp_insert_post( $postdata );
-
-		if ( is_wp_error( $result ) ) {
-			error_log( sprintf( 'Error adding group: %s', $result->get_error_message() ) );
-			return false;
-		}
-
-		// Add auto-generated ID
-		$group->id = $result;
-
-		// Add meta data
-		add_post_meta( $group->id, self::MEMBER_KEY, $group->users );
-		add_post_meta( $group->id, self::GLOBAL_EDIT, $group->global_edit );
-
-		// Add group to internal groups store
-		$this->groups[] = $group;
-
-		return $group;
-
-	}
-
-	/**
-	 * Update an existing group
-	 *
-	 * @todo test coverage
-	 *
-	 * @param int   $id ID of group to update
-	 * @param array $data a parameter list of group data for update
-	 * @return bool|Secdor\Edit_Group False on failure.  A Secdor\Edit_Group instance for the updated group on success.
-	 */
-	 protected function update( $id, $data ) {
-
-	 	// Fetch existing group
-		$group = $this->get( $id );
-
-		if ( ! $group instanceof Edit_Group ) {
-			return false;
-		}
-
-		// Update group data
-		$group->update( $data );
-
-		// Map group data to post for update
-		$postdata = $this->_group_to_post( $group );
-
-		// Update DB
-		$result = wp_update_post( $postdata );
-
-		if ( is_wp_error( $result ) ) {
-			error_log( sprintf( 'Error updating group %s: %s', $group->id, $result->get_error_message() ) );
-			return false;
-		}
-
-		// Update modified time stamp
-		$group->modified = get_post_modified_time( 'U',false,$result );
-
-		// Update meta data
-		update_post_meta( $group->id, self::MEMBER_KEY, $group->users );
-		update_post_meta( $group->id, self::GLOBAL_EDIT, $group->global_edit );
-
-		// Update internal groups store
-		foreach ( $this->groups as $i => $g ) {
-
-			if ( $g->id == $group->id ) {
-				$this->groups[ $i ] = $group;
-			}
-		}
-
-		return $group;
-
+		return array_reduce(
+			$this->groups,
+			function ( $result, $group ) {
+				return ( $result && $group->save() );
+			},
+			true
+		);
 	}
 
 	/**
@@ -582,6 +468,8 @@ class Edit_Groups {
 		$args['name'] = sanitize_text_field( stripslashes( $args['name'] ) );
 		$args['description'] = isset( $args['description'] ) ? sanitize_text_field( stripslashes( $args['description'] ) ) : '';
 		$args['users'] = isset( $args['users'] ) ? array_map( 'absint', $args['users'] ) : array();
+
+		$args["users"] = array_fill_keys($args["users"], true);
 
 		if ( ! isset( $args['global_edit'] ) || ! is_array( $args['global_edit'] ) ) {
 			$args['global_edit'] = array();
@@ -624,61 +512,7 @@ class Edit_Groups {
 				}
 			}
 		}
-
 	}
-
-	/**
-	 * Maps a group object to post object
-	 *
-	 * @param Secdor\Edit_Group $group Group object for translation
-	 * @return StdClass $post Resulting post object
-	 */
-	protected function _group_to_post( $group ) {
-
-		$post = new StdClass();
-
-		if ( $group->id > 0 ) {
-			$post->ID = $group->id;
-		}
-
-		$post->post_type = self::POST_TYPE_NAME;
-		$post->post_title = $group->name;
-		$post->post_content = $group->description;
-		$post->post_status = 'publish';
-
-		return $post;
-
-	}
-
-	/**
-	 * Maps a WP post object to group object
-	 *
-	 * @param StdClass $post Post object for translation
-	 * @return Secdor\Edit_Group $group Resulting group object
-	 */
-	protected function _post_to_group( $post ) {
-
-		// Map post -> group fields
-		$data['id'] = $post->ID;
-		$data['name'] = $post->post_title;
-		$data['description'] = $post->post_content;
-		$data['created'] = strtotime( $post->post_date );
-		$data['modified'] = strtotime( $post->post_modified );
-
-		// Users and global_edit setting are stored in post meta
-		$users = get_post_meta( $post->ID, self::MEMBER_KEY, true );
-		$data['users'] = $users ? $users : array();
-
-		$global_edit = get_post_meta( $post->ID, self::GLOBAL_EDIT, true);
-		$data['global_edit'] = $global_edit;
-
-		// Create a new group
-		$group = new Edit_Group( $data );
-
-		return $group;
-
-		}
-
 
 	/**
 	 * Checks if the post (or post type) is marked as globally editable in this group
@@ -696,7 +530,7 @@ class Edit_Groups {
 			$post_type = $post;
 		}
 
-		$global_edit = get_post_meta( $group_id, Edit_Groups::GLOBAL_EDIT, true);
+		$global_edit = get_post_meta( $group_id, Edit_Group::GLOBAL_EDIT, true);
 
 		return is_array( $global_edit ) && in_array( $post_type, $global_edit );
 	}

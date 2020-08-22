@@ -84,7 +84,7 @@ class Test_Secdor_Edit_Group extends WP_UnitTestCase {
 			'users' => array( 3,4 ),
 			);
 
-		$group->update( $updates );
+		$group->assign_attributes( $updates );
 
 		$this->assertEquals( $updates['name'], $group->name );
 		$this->assertEquals( $updates['description'], $group->description );

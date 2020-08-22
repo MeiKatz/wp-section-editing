@@ -17,7 +17,6 @@ class Groups_Admin {
 	const EDITABLE_POST_STATUS = 'section_editable';
 
 	const MANAGE_USERS_COLUMN = 'section_groups';
-	const MANAGE_USERS_MAX_NAME_LENGTH = 60;
 
 	const POSTS_PER_PAGE_OPTION = 'buse_posts_per_page';
 
@@ -87,7 +86,7 @@ class Groups_Admin {
 
 				foreach ( $groups as $group ) {
 
-					$toolong = self::MANAGE_USERS_MAX_NAME_LENGTH < ( $current_length + strlen( $group->name ) );
+					$toolong = Edit_User::MAX_NAME_LENGTH < ( $current_length + strlen( $group->name ) );
 
 					// Allow at least one group
 					if ( 0 == $visible_count || ( 0 == $truncated_count && ! $toolong ) ) {
@@ -156,14 +155,14 @@ class Groups_Admin {
 				$group_controller = Edit_Groups::get_instance();
 				$groups = $group_controller->get_groups();
 
-				$existing_groups = get_post_meta( $post->ID, Group_Permissions::META_KEY );
-				$parent_groups = get_post_meta( $parent->ID, Group_Permissions::META_KEY );
+				$existing_groups = get_post_meta( $post->ID, Edit_Group::META_KEY );
+				$parent_groups = get_post_meta( $parent->ID, Edit_Group::META_KEY );
 
 				foreach ( $groups as $group ) {
 
 					// Add newly valid groups
 					if ( in_array( $group->id, $parent_groups ) && ! in_array( $group->id, $existing_groups ) ) {
-						add_post_meta( $post->ID, Group_Permissions::META_KEY, $group->id );
+						add_post_meta( $post->ID, Edit_Group::META_KEY, $group->id );
 					}
 				}
 			}
@@ -175,12 +174,12 @@ class Groups_Admin {
 			$group_controller = Edit_Groups::get_instance();
 			$groups = $group_controller->get_groups();
 
-			$existing_groups = get_post_meta( $post->ID, Group_Permissions::META_KEY );
+			$existing_groups = get_post_meta( $post->ID, Edit_Group::META_KEY );
 
 			foreach ( $groups as $group ) {
 
 				// Remove all group permissions for non-published posts
-				delete_post_meta( $post->ID, Group_Permissions::META_KEY, $group->id );
+				delete_post_meta( $post->ID, Edit_Group::META_KEY, $group->id );
 
 			}
 		}
@@ -322,7 +321,7 @@ class Groups_Admin {
 
 			foreach ( $section_groups as $group ) {
 				$meta_query[] = array(
-					'key' => Group_Permissions::META_KEY,
+					'key' => Edit_Group::META_KEY,
 					'value' => $group->id,
 						'compare' => '=',
 					);
