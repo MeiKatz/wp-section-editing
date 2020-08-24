@@ -17,20 +17,15 @@ msgstr ""
 "Plural-Forms: plurals=2; plural=(n > 1)\n"
 "X-Generator: Eazy Po 0.9.5.3\n"
 
-#: interface/edit-group.php:3 src/class-groups-admin.php:516
-msgid "Add New"
-msgstr ""
-
-#: interface/edit-group.php:6
+#: interface/edit-group.php:8
 msgid "Properties"
 msgstr ""
 
-#: interface/edit-group.php:7 interface/group-stats.php:7
-#: interface/groups.php:10 interface/groups.php:19
+#: interface/edit-group.php:9 interface/group-stats.php:7
 msgid "Members"
 msgstr ""
 
-#: interface/edit-group.php:8
+#: interface/edit-group.php:10
 msgid "Permissions"
 msgstr ""
 
@@ -58,8 +53,7 @@ msgstr[1] ""
 msgid "Group Member List"
 msgstr ""
 
-#: interface/group-members.php:28 interface/groups.php:12
-#: interface/groups.php:21
+#: interface/group-members.php:28
 msgid "Remove"
 msgstr ""
 
@@ -125,12 +119,11 @@ msgid "Go to the last page"
 msgstr ""
 
 #: interface/group-properties.php:3 interface/group-stats.php:6
-#: interface/groups.php:8 interface/groups.php:17
+#: src/class-group-list-table.php:9
 msgid "Name"
 msgstr ""
 
-#: interface/group-properties.php:7 interface/groups.php:9
-#: interface/groups.php:18
+#: interface/group-properties.php:7 src/class-group-list-table.php:10
 msgid "Description"
 msgstr ""
 
@@ -150,7 +143,7 @@ msgstr ""
 msgid "Delete group"
 msgstr ""
 
-#: interface/group-stats.php:18 interface/groups.php:40
+#: interface/group-stats.php:18 src/class-group-list-table.php:32
 msgid "Delete"
 msgstr ""
 
@@ -164,49 +157,52 @@ msgstr ""
 msgid "Section Groups"
 msgstr ""
 
-#: interface/groups.php:4 interface/groups.php:48
-msgid "Add an Editor Group"
+#: interface/groups.php:6 src/class-groups-admin.php:516
+msgid "Add New"
 msgstr ""
 
-#: interface/groups.php:11 interface/groups.php:20
-#: src/class-groups-admin.php:230 src/class-groups-admin.php:291
-msgid "Editable"
-msgstr ""
-
-#: src/class-edit-groups.php:54
+#: src/class-edit-groups.php:53
 msgctxt "Post Type General Name"
 msgid "Section Groups"
 msgstr ""
 
-#: src/class-edit-groups.php:55
+#: src/class-edit-groups.php:54
 msgctxt "Post Type Singular Name"
 msgid "Section Group"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:113
+#: src/class-flat-permissions-editor.php:123
 msgid "Published on"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:114
+#: src/class-flat-permissions-editor.php:124
 msgid "Draft"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:136 src/class-groups-admin.php:412
+#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:412
 #: src/class-groups-admin.php:466
 msgid "Allow"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:136 src/class-groups-admin.php:413
+#: src/class-flat-permissions-editor.php:144 src/class-groups-admin.php:413
 #: src/class-groups-admin.php:467
 msgid "Deny"
 msgstr ""
 
-#: src/class-flat-permissions-editor.php:174
+#: src/class-flat-permissions-editor.php:186
 msgid "(no title)"
 msgstr ""
 
-#: src/class-groups-admin.php:80
-msgid "None"
+#: src/class-group-list-table.php:11
+msgid "Members count"
+msgstr ""
+
+#: src/class-group-list-table.php:12
+msgid "Editable entries"
+msgstr ""
+
+#: src/class-group-list-table.php:27
+msgid "Edit"
 msgstr ""
 
 #: src/class-groups-admin.php:109
@@ -218,6 +214,10 @@ msgid "other"
 msgid_plural "others"
 msgstr[0] ""
 msgstr[1] ""
+
+#: src/class-groups-admin.php:230 src/class-groups-admin.php:291
+msgid "Editable"
+msgstr ""
 
 #: src/class-groups-admin.php:231
 #, php-format
@@ -248,7 +248,7 @@ msgstr ""
 msgid "add them to your site"
 msgstr ""
 
-#: src/class-groups-admin.php:446 src/class-section-editing-plugin.php:82
+#: src/class-groups-admin.php:446 src/class-section-editing-plugin.php:85
 msgid "BU Navigation plugin"
 msgstr ""
 
@@ -310,7 +310,7 @@ msgstr ""
 msgid "non-editable"
 msgstr ""
 
-#: src/class-groups-admin.php:470 src/class-groups-admin.php:934
+#: src/class-groups-admin.php:470 src/class-groups-admin.php:941
 msgid "All"
 msgstr ""
 
@@ -380,35 +380,35 @@ msgstr ""
 msgid "Add Section Group"
 msgstr ""
 
-#: src/class-section-editing-plugin.php:83
-#: src/class-section-editing-plugin.php:89
+#: src/class-section-editing-plugin.php:86
+#: src/class-section-editing-plugin.php:92
 msgid ""
 "The BU Section Editing plugin relies on the BU Navigation plugin for "
 "displaying hierarchical permission editors."
 msgstr ""
 
-#: src/class-section-editing-plugin.php:85
+#: src/class-section-editing-plugin.php:88
 #, php-format
 msgid ""
 "Please install and activate the %s in order to set permissions for "
 "hierarchical post types."
 msgstr ""
 
-#: src/class-section-editing-plugin.php:88
+#: src/class-section-editing-plugin.php:91
 msgid "upgrade your copy of BU Navigation"
 msgstr ""
 
-#: src/class-section-editing-plugin.php:90
+#: src/class-section-editing-plugin.php:93
 msgid ""
 "This version of BU Section Editing requires at least version 1.1 of BU "
 "Navigation."
 msgstr ""
 
-#: src/class-section-editing-plugin.php:92
+#: src/class-section-editing-plugin.php:95
 #, php-format
 msgid "Please %s to enable permissions for hierarchical post types."
 msgstr ""
 
-#: src/class-section-editing-plugin.php:143
+#: src/class-section-editing-plugin.php:146
 msgid "Manage Groups"
 msgstr ""
