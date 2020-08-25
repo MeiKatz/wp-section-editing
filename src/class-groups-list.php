@@ -1,35 +1,48 @@
 <?php
 namespace Secdor;
 
+use \Countable;
+use \Iterator;
+
 /**
  * Class for listing groups (designed to be extended)
  *
  * @todo rework to use standard array traversal function and allow for keyed arrays
  */
-class Groups_List {
+class Groups_List
+  implements Countable, Iterator {
 
-  public $current_group;
-  public $edit_groups;
+  private $currentIndex = 0;
+  private $groups = array();
 
-  function __construct() {
-    $this->edit_groups = Edit_Groups::get_instance();
-    $this->current_group = -1;
+  public function __construct() {
+    $this->groups = Edit_Groups::get_instance()->groups;
   }
 
-  function have_groups() {
-    if ( count( $this->edit_groups->groups ) > 0 && $this->current_group < (count( $this->edit_groups->groups ) - 1) ) {
-      return true;
-    } else {
-      return false;
-    }
+  public function count() {
+    return count( $this->groups );
   }
 
-  function the_group() {
-    $this->current_group++;
-    return $this->edit_groups->groups[ $this->current_group ];
+  public function rewind() {
+    $this->currentIndex = 0;
   }
 
-  function rewind() {
-    $this->current_group = -1;
+  public function valid() {
+    return (
+      $this->count() > 0
+        && $this->currentIndex < $this->count()
+    );
+  }
+
+  public function current() {
+    return $this->groups[ $this->currentIndex ];
+  }
+
+  public function key() {
+    return $this->currentIndex;
+  }
+
+  public function next() {
+    ++$this->currentIndex;
   }
 }

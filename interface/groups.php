@@ -15,11 +15,10 @@
 			</tr>
 		</thead>
 		<tbody>
-		<?php if ( $group_list->have_groups() ) : ?>
-			<?php $count = 0; ?>
-			<?php while ( $group_list->have_groups() ) : $group = $group_list->the_group(); ?>
+		<?php if ( $group_list->valid() ) : ?>
+			<?php foreach ( $group_list as $i => $group ) : ?>
 			<?php
-			$li_class = $count % 2 ? '' : 'class="alternate"';
+			$li_class = ($i % 2) ? '' : 'class="alternate"';
 			$edit_url = Secdor\Groups_Admin::manage_groups_url( 'edit', array( 'id' => $group->id ) );
 			$description = (strlen( $group->description ) > 60) ? substr( $group->description, 0, 60 ) . ' [...]' : $group->description;
 			?>
@@ -37,8 +36,7 @@
 				<td class="num"><?php echo count( $group->users ); ?></td>
 				<td><?php echo Secdor\Groups_Admin::group_permissions_string( $group ); ?></td>
 			</tr>
-			<?php $count++; ?>
-			<?php endwhile; ?>
+			<?php endforeach; ?>
 		<?php endif; ?>
 		</tbody>
 		<tfoot>
