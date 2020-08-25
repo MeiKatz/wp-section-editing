@@ -82,18 +82,18 @@ class Section_Capabilities {
 			return $caps; // bail early
 		}
 
-		if ( $this->is_post_cap( $cap, 'edit_post' ) ) {
+		if ( $this->is_post_capability( $cap, 'edit_post' ) ) {
 			$caps = $this->_override_edit_caps( $wp_user, $post_id, $caps );
 		}
 
-		if ( $this->is_post_cap( $cap, 'delete_post' ) ) {
+		if ( $this->is_post_capability( $cap, 'delete_post' ) ) {
 			$caps = $this->_override_delete_caps( $wp_user, $post_id, $caps );
 		}
 
 		// As publish_posts does not come tied to a post ID, relying on the global $post_ID is fragile
 		// For instance, the "Quick Edit" interface of the edit posts page does not populate this
 		// global, and therefore the "Published" status is unavailable with this meta_cap check in place
-		if ( $this->is_post_cap( $cap, 'publish_posts' ) ) {
+		if ( $this->is_post_capability( $cap, 'publish_posts' ) ) {
 			$caps = $this->_override_publish_caps( $wp_user, $post_id, $caps );
 		}
 
@@ -276,16 +276,15 @@ class Section_Capabilities {
 	 * @param $meta_cap
 	 * @return bool
 	 **/
-	public function is_post_cap( $cap, $map_cap ) {
-
-		$caps = array();
-
+	public function is_post_capability( $cap, $map_cap ) {
 		foreach ( $this->get_post_types() as $post_type ) {
 			if ( isset( $post_type->cap->$map_cap ) ) {
-				$caps[] = $post_type->cap->$map_cap;
+				if ( $post_type->cap->$map_cap == $cap ) {
+					return true;
+				}
 			}
 		}
 
-		return in_array( $cap, $caps );
+		return false;
 	}
 }
