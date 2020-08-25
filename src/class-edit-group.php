@@ -425,7 +425,7 @@ class Edit_Group {
   }
 
   public function delete_permissions() {
-    $supported_post_types = Group_Permissions::get_supported_post_types( 'names' );
+    $supported_post_types = Section_Editing_Plugin::get_supported_post_types( 'names' );
 
     $meta_query = array(
       'key' => self::META_KEY,

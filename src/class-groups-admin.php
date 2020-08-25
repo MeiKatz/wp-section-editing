@@ -239,7 +239,7 @@ class Groups_Admin {
 			// WP_Query will not recognize custom post status query vars without this
 			register_post_status( self::EDITABLE_POST_STATUS, $args );
 
-			$supported_post_types = Group_Permissions::get_supported_post_types( 'names' );
+			$supported_post_types = Section_Editing_Plugin::get_supported_post_types( 'names' );
 
 			$gc = Edit_Groups::get_instance();
 			$user = wp_get_current_user();
@@ -758,7 +758,7 @@ class Groups_Admin {
 		}
 
 		// Convert permission JSON strings to PHP arrays
-		$post_types = Group_Permissions::get_supported_post_types( 'names' );
+		$post_types = Section_Editing_Plugin::get_supported_post_types( 'names' );
 
 		foreach ( $post_types as $post_type ) {
 
@@ -896,7 +896,7 @@ class Groups_Admin {
 		if ( ! is_null( $post_type ) && $pto = get_post_type_object( $post_type ) ) {
 			$content_types = array( $pto );
 		} else {
-			$content_types = Group_Permissions::get_supported_post_types();
+			$content_types = Section_Editing_Plugin::get_supported_post_types();
 		}
 
 		$output = '';
