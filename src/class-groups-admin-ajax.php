@@ -26,39 +26,45 @@ class Groups_Admin_Ajax {
 	 *
 	 * The variable is used for autocompletion (find user tool) and while adding members
 	 */
-	static public function site_users_script() {
-
+	public static function site_users_script() {
 		$return = array();
 
 		// Get all users of the current site
-		$users = get_users();
+		$wp_users = get_users();
 
 		// Format output
-		foreach ( $users as $user ) {
+		foreach ( $wp_users as $wp_user ) {
+			$edit_user = new Edit_User( $wp_user );
 
-			$email = ! empty( $user->user_email ) ? " ({$user->user_email})" : '';
-
-			$return[] = array(
-				'autocomplete' => array(
-					'label' => sprintf( '%1$s%2$s', $user->display_name, $email ),
-					'value' => $user->user_login,
-				),
-				'user' => array(
-					'id' => (int) $user->ID,
-					'login' => $user->user_login,
-					'nicename' => $user->user_nicename,
-					'display_name' => $user->display_name,
-					'email' => $user->user_email,
-					'is_section_editor' => (bool) Section_Editing_Plugin::is_allowed_user( $user->ID ),
-				),
+			$email = (
+				! empty( $edit_user->email_address() )
+					? " ({$edit_user->email_address()})"
+					: ""
 			);
 
+			$return[] = array(
+				"autocomplete" => array(
+					"label" => sprintf(
+						"%1$s%2$s",
+						$edit_user->display_name(),
+						$email
+					),
+					"value" => $edit_user->login(),
+				),
+				"user" => array(
+					"id" => $edit_user->id(),
+					"login" => $edit_user->login(),
+					"nicename" => $edit_user->nice_name(),
+					"display_name" => $edit_user->display_name(),
+					"email" => $edit_user->email_address(),
+					"is_section_editor" => $edit_user->is_allowed(),
+				),
+			);
 		}
 
 		header( 'Content-type: application/x-javascript' );
 		echo 'var secdor_site_users = ' . json_encode( $return );
 		die();
-
 	}
 
 	/**

@@ -207,37 +207,14 @@ class Section_Editing_Plugin {
     $allowed_users = array();
 
     // Filter blog users by section editing status
-    foreach ( $wp_user_query->get_results() as $user ) {
+    foreach ( $wp_user_query->get_results() as $wp_user ) {
+      $edit_user = new Edit_User( $wp_user );
 
-      if ( self::is_allowed_user( $user->ID ) ) {
-        $allowed_users[] = $user;
+      if ( $edit_user->is_allowed() ) {
+        $allowed_users[] = $wp_user;
       }
     }
 
     return $allowed_users;
-
-  }
-
-  /**
-   * Check if a user has the capability to be added to section groups
-   */
-  public static function is_allowed_user( $user = null ) {
-
-    if ( is_null( $user ) ) {
-      $user = wp_get_current_user();
-    } else if ( is_numeric( $user ) ) {
-      $user = new WP_User( intval( $user ) );
-    }
-
-    if ( is_super_admin( $user->ID ) ) {
-      return false;
-    }
-
-    if ( $user->has_cap( 'edit_in_section' ) ) {
-      return true;
-    }
-
-    return false;
-
   }
 }

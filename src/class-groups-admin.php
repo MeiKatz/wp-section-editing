@@ -222,7 +222,7 @@ class Groups_Admin {
 	 */
 	public static function add_edit_views() {
 
-		if ( Section_Editing_Plugin::is_allowed_user() ) {
+		if ( Edit_User::get_current()->is_allowed() ) {
 
 			// Most of these options don't do anything at this time, but we should keep an eye
 			// on the ticket mentioned above as this could change in future releases

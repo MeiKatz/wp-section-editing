@@ -1,7 +1,7 @@
 <?php
 
 // Only add filters for section editors
-if ( Secdor\Section_Editing_Plugin::is_allowed_user( get_current_user_id() ) ) {
+if ( Secdor\Edit_User::get_current()->is_allowed() ) {
 
 	add_action( 'bu_nav_tree_enqeueue_scripts', 'buse_bu_navigation_scripts' );
 	add_filter( 'bu_nav_tree_script_context', 'buse_bu_navigation_script_context' );

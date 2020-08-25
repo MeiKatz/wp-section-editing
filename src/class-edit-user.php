@@ -12,12 +12,64 @@ class Edit_User {
     $this->wp_user = $wp_user;
   }
 
+  public static function get_current() {
+    $wp_user = wp_get_current_user();
+    return new self( $wp_user );
+  }
+
+  /**
+   * Check if a user has the capability to be added to section groups
+   */
+  public function is_allowed() {
+    if ( is_super_admin( $this->id() ) ) {
+      return false;
+    }
+
+    if ( $this->wp_user->has_cap( "edit_in_section" ) ) {
+      return true;
+    }
+
+    return false;
+  }
+
   public function id() {
     if ($this->wp_user->ID == 0) {
       return null;
     }
 
     return intval( $this->wp_user->ID );
+  }
+
+  public function login() {
+    return $this->wp_user->user_login;
+  }
+
+  public function nice_name() {
+    return $this->wp_user->user_nicename;
+  }
+
+  public function email_address() {
+    return $this->wp_user->user_email;
+  }
+
+  public function first_name() {
+    return $this->wp_user->first_name;
+  }
+
+  public function last_name() {
+    return $this->wp_user->last_name;
+  }
+
+  public function full_name() {
+    return sprintf(
+      "%s %s",
+      $this->first_name(),
+      $this->last_name()
+    );
+  }
+
+  public function display_name() {
+    return $this->wp_user->display_name;
   }
 
   public function can_edit_section( $post_id ) {
