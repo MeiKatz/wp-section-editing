@@ -177,7 +177,7 @@ class Edit_Groups {
 
 		// Set permissions
 		if ( isset( $data['perms'] ) ) {
-			$group->update_permissions( $data['perms'] );
+			$group->permissions()->update( $data['perms'] );
 		}
 
 		// Notify
@@ -211,7 +211,7 @@ class Edit_Groups {
 
 		// Update permissions.
 		if ( isset( $data['perms'] ) ) {
-			$group->update_permissions( $data['perms'] );
+			$group->permissions()->update( $data['perms'] );
 		}
 
 		return $group;

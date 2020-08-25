@@ -43,7 +43,7 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 			'page' => array( 'allowed' => $pages ),
 			);
 
-		$group->update_permissions( $perms );
+		$group->permissions()->update( $perms );
 
 		$allowedposts = $group->get_allowed_posts([
 			"post_type" => "post",
@@ -87,7 +87,7 @@ class Test_Secdor_Group_Permissions extends WP_UnitTestCase {
 		$this->assertEquals( asort( $posts ), asort( $allowedposts ) );
 		$this->assertEquals( asort( $pages ), asort( $allowedpages ) );
 
-		$group->delete_permissions();
+		$group->permissions()->delete();
 
 		$allowedposts = $group->get_allowed_posts([
 			"post_type" => "post",
