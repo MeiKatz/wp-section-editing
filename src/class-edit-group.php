@@ -355,12 +355,12 @@ class Edit_Group {
    */
   public function can_edit(
     $post_id,
-    $ignore = ""
+    $ignore_global = false
   ) {
-    if ( 'ignore_global' !== $ignore ) {
+    if ( $ignore_global ) {
       $groups = Edit_Groups::get_instance();
 
-      if ( $groups->post_is_globally_editable_by_group( $post_id, $this->id ) ) {
+      if ( $groups->post_is_globally_editable_by_group( $post_id, $this->id() ) ) {
         return true;
       }
     }

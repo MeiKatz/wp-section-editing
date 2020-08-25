@@ -174,7 +174,7 @@ class Flat_Permissions_Editor extends Permissions_Editor {
    * @todo merge with hierarchical format_post logic
    */
   public function format_post( $post, $has_children = false ) {
-    $editable = $this->group->can_edit( $post->ID, 'ignore_global' );
+    $editable = $this->group->can_edit( $post->ID, true );
     $perm = (
       $editable
         ? "allowed"
