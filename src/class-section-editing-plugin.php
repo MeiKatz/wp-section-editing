@@ -10,7 +10,6 @@ use \WP_User;
 class Section_Editing_Plugin {
 
   public static $caps;
-  public static $upgrader;
 
   const VERSION = '0.9.9';
   const VERSION_OPTION = '_buse_version';
@@ -163,8 +162,8 @@ class Section_Editing_Plugin {
 
     // Check if plugin has been updated (or just installed) and store current version
     if ( version_compare( $version, self::VERSION, '<' ) ) {
-      self::$upgrader = new Section_Editing_Upgrader();
-      self::$upgrader->upgrade( $version );
+      $upgrader = new Section_Editing_Upgrader();
+      $upgrader->upgrade( $version );
 
       // Store new version
       update_option(
@@ -185,11 +184,10 @@ class Section_Editing_Plugin {
 
     // Look for any query params that signify updates
     if ( array_key_exists( 'activated', $_GET ) || array_key_exists( 'activate', $_GET ) || array_key_exists( 'activate-multi', $_GET ) ) {
-      self::$upgrader = new Section_Editing_Upgrader();
-      self::$upgrader->populate_roles();
+      $upgrader = new Section_Editing_Upgrader();
+      $upgrader->populate_roles();
 
     }
-
   }
 
   /**
