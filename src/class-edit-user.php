@@ -2,6 +2,7 @@
 namespace Secdor;
 
 use \WP_User;
+use \WP_User_Query;
 
 class Edit_User {
   const MAX_NAME_LENGTH = 60;
@@ -15,6 +16,38 @@ class Edit_User {
   public static function get_current() {
     $wp_user = wp_get_current_user();
     return new self( $wp_user );
+  }
+
+  /**
+   * Query for all users with the cability to be added to section groups
+   */
+  public static function get_allowed_users(
+    array $query_args = array()
+  ) {
+
+    $defaults = array(
+      "search_columns" => array(
+        "user_login",
+        "user_nicename",
+        "user_email",
+      ),
+    );
+
+    $query_args = wp_parse_args( $query_args, $defaults );
+    $wp_user_query = new WP_User_Query( $query_args );
+
+    $allowed_users = array();
+
+    // Filter blog users by section editing status
+    foreach ( $wp_user_query->get_results() as $wp_user ) {
+      $edit_user = new Edit_User( $wp_user );
+
+      if ( $edit_user->is_allowed() ) {
+        $allowed_users[] = $wp_user;
+      }
+    }
+
+    return $allowed_users;
   }
 
   /**

@@ -596,7 +596,7 @@ class Groups_Admin {
 			}
 		}
 
-		$valid_user_count = count( Section_Editing_Plugin::get_allowed_users() );
+		$valid_user_count = count( Edit_User::get_allowed_users() );
 
 		if ( $valid_user_count == 0 ) {
 

@@ -22,7 +22,7 @@
 	</div>
 	<div class="secdor-widget-body">
 		<ul id="group-member-list">
-			<?php $users = Secdor\Section_Editing_Plugin::get_allowed_users(); ?>
+			<?php $users = Secdor\Edit_User::get_allowed_users(); ?>
 			<?php foreach ( $users as $user ) :  ?>
 			<?php $checked = $group->has_user( $user ) ? 'checked="checked"' : ''; ?>
 			<li class="member<?php if ( $group->has_user( $user ) ) :  ?> active<?php endif; ?>" >
