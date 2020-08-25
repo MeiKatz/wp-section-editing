@@ -881,25 +881,9 @@ class Groups_Admin {
 
 	}
 
-	/**
-	 * Render group permissions string
-	 */
-	static function group_permissions_string( $group, $args = array() ) {
+	public static function group_permissions( $group ) {
+		$content_types = Section_Editing_Plugin::get_supported_post_types();
 
-		$defaults = array(
-			'post_type' => null,
-			'sep' => ', ',
-			);
-
-		extract( wp_parse_args( $args, $defaults ) );
-
-		if ( ! is_null( $post_type ) && $pto = get_post_type_object( $post_type ) ) {
-			$content_types = array( $pto );
-		} else {
-			$content_types = Section_Editing_Plugin::get_supported_post_types();
-		}
-
-		$output = '';
 		$counts = array();
 		$groups = Edit_Groups::get_instance();
 
@@ -907,29 +891,52 @@ class Groups_Admin {
 			$group = $groups->get( $group );
 		}
 
-		if ( ! is_object( $group ) ) {
+		if ( !is_object( $group ) ) {
 			return false;
 		}
 
 		foreach ( $content_types as $pt ) {
-
 			$count = 0;
 			$global_edit = false;
 
 			if ( $group->id > 0 ) {
-				$global_edit = $groups->post_is_globally_editable_by_group( $pt->name, $group->id ) ? 'global-edit' : '';
+				$global_edit = $groups->post_is_globally_editable_by_group( $pt->name, $group->id );
 				$count = $groups->get_allowed_post_count( array( 'group' => $group->id, 'post_type' => $pt->name ) );
 			}
 
+			$counts[] = array(
+				"content_type" => $pt,
+				"name" => $pt->name,
+				"global_edit" => $global_edit,
+				"count" => $count,
+			);
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Render group permissions string
+	 */
+	static function group_permissions_string( $group, $separator = ", " ) {
+		$content_types = self::group_permissions( $group );
+
+		foreach ( $content_types as $pt ) {
+			$count = $pt[ "count" ];
+			$global_edit = (
+				$pt[ "global_edit" ]
+					? "global-edit"
+					: ""
+			);
+
 			if ( $global_edit ) {
-				$label = $pt->label;
-			}
-			else {
-				$label = ( $count == 1 ) ? $pt->labels->singular_name : $pt->label;
+				$label = $pt[ "content_type" ]->label;
+			} else {
+				$label = ( $count == 1 ) ? $pt[ "content_type"]->labels->singular_name : $pt[ "content_type" ]->label;
 			}
 
 			$counts[] = sprintf( '<span id="%s-stats" class="perm-stats %s"><span class="perm-stat-global">%s</span><span class="perm-stat-count">%s</span> <span class="perm-label">%s</span></span>',
-				$pt->name,
+				$pt[ "name" ],
 				$global_edit,
 				__('All', SECDOR_TEXTDOMAIN),
 				$count,
@@ -938,11 +945,6 @@ class Groups_Admin {
 
 		}
 
-		if ( ! empty( $counts ) ) {
-			$output = implode( $sep, $counts );
-		}
-
-		return $output;
-
+		return implode( $separator, $counts );
 	}
 }
