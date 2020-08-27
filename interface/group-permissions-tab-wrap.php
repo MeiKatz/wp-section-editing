@@ -32,7 +32,18 @@
       "group" => $group_id,
       "post_type" => $post_type->name,
     ));
+
+    $reduced_posts = array_map(function ($post) {
+      return array(
+        "id" => $post->ID,
+        "title" => $post->post_title,
+        "parent_id" => $post->post_parent,
+      );
+    }, $posts);
   ?>
+    <script>
+      var __tree_<?php echo $post_type->name; ?> = <?php echo json_encode($reduced_posts); ?>
+    </script>
     <div id="<?php echo $panel_id; ?>" class="members-tab-content editable-role" <?php echo ($is_active ? "" : "hidden"); ?> role="tabpanel" tabindex="0" data-post-type="<?php echo $post_type->name; ?>">
       <?php if (!empty($posts)) { ?>
       <?php
