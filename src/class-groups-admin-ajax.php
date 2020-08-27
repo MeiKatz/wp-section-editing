@@ -68,6 +68,76 @@ class Groups_Admin_Ajax {
 				"can_move",
 			)
 		);
+
+		add_action(
+			"wp_ajax_secdor-editor-panels",
+			array(
+				__CLASS__,
+				"editor_panels",
+			)
+		);
+	}
+
+	public static function editor_panels() {
+		self::assert_ajax();
+
+		$group = self::get_current_group();
+		$post_types = Section_Editing_Plugin::get_supported_post_types();
+
+		$panels = array_map(function ( $post_type ) use ( $group ) {
+			$posts = get_pages(array(
+				"post_type" => $post_type->name,
+			));
+
+			$menu_icon = $post_type->menu_icon;
+
+			if ( ! $menu_icon || substr( $menu_icon, 0, 5 ) === "data:" ) {
+			  // maybe add support for custom icons
+			  // @todo: find out how to colorize custom icons
+			  //        in svg + base64
+			  $menu_icon = "dashicons-admin-post";
+			}
+
+			if ( empty( $posts ) ) {
+				$posts = array();
+			}
+
+			$reduced_posts = array_map(function ( $post ) use ( $group ) {
+			  return array(
+			    "id" => $post->ID,
+			    "label" => $post->post_title,
+			    "parent_id" => $post->post_parent,
+			    "selected" => $group->can_edit( $post ),
+			  );
+			}, $posts);
+
+			$posts_by_id = array_reduce(
+				$reduced_posts,
+				function ( $posts, $post ) {
+					$posts[ $post["id"] ] = $post;
+					return $posts;
+				},
+				array()
+			);
+
+			return array(
+				"id" => $post_type->name,
+				"icon" => $menu_icon,
+				"type" => $post_type->name,
+				"label" => $post_type->label,
+				"posts" => $posts_by_id,
+				"display_as" => (
+					$post_type->hierarchical
+						? "tree"
+						: "list"
+				),
+			);
+		}, $post_types);
+
+		return self::send_json(
+			WP_Http::OK,
+			$panels
+		);
 	}
 
 	public static function handle_users_autocomplete() {
@@ -440,8 +510,10 @@ class Groups_Admin_Ajax {
 		$status_code,
 		$data = null
 	) {
-		header( "Content-Type: application/json" );
-		http_response_code( $status_code );
+		if ( ! headers_sent() ) {
+			header( "Content-Type: application/json" );
+			http_response_code( $status_code );
+		}
 
 		echo json_encode( $data );
 

@@ -43,7 +43,7 @@
 							<input id="edit-group-name" type="text" value="<?php echo $group->name(); ?>" />
 						</div>
 					</div>
-					<?php include "group-permissions.php"; ?>
+					<div id="group-permissions-editor">Editor wird geladen ...</div>
 				</div>
 				<div id="postbox-container-1" class="postbox-container side">
 					<?php

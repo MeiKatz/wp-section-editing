@@ -425,23 +425,12 @@ class Groups_Admin {
 			);
 
 			wp_enqueue_script(
-				"secdor-tabs",
+				"secdor-app",
 				plugins_url(
-					"/js/secdor-tabs" . $suffix . ".js",
+					"/js/secdor-app.js",
 					SECDOR_PLUGIN_ENTRYPOINT
 				),
-				array( "jquery" ),
-				$version,
-				true
-			);
-
-			wp_enqueue_script(
-				"secdor-tree",
-				plugins_url(
-					"/js/secdor-tree" . $suffix . ".js",
-					SECDOR_PLUGIN_ENTRYPOINT
-				),
-				array( "jquery" ),
+				array(),
 				$version,
 				true
 			);
